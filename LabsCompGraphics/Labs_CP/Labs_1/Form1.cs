@@ -51,13 +51,13 @@ namespace Labs_1
             //Bitmap resultImage = filter.processImage(image);
             //pictureBox1.Image = resultImage;
             //pictureBox1.Refresh();
-            Filters filter = new invertedImage();
+            Filters filter = new InvertedImage();
             backgroundWorker1.RunWorkerAsync(filter);
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            Bitmap newImage = ((Filters)e.Argument).processImage(image, backgroundWorker1);
+            Bitmap newImage = ((Filters)e.Argument).ProcessImage(image, backgroundWorker1);
             if (backgroundWorker1.CancellationPending!=true)
                 image = newImage;
         }
@@ -84,7 +84,25 @@ namespace Labs_1
 
         private void оттенкиСерогоToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Filters filter = new grayImage();
+            Filters filter = new GrayImage();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void сепияToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new SepiaImage();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void увеличениеЯркостиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new BrightnessIncreaseFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
+
+        private void сдвигToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new ShiftRightFilter();
             backgroundWorker1.RunWorkerAsync(filter);
         }
     }
