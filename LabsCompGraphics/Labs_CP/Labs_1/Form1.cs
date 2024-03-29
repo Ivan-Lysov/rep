@@ -105,5 +105,11 @@ namespace Labs_1
             Filters filter = new ShiftRightFilter();
             backgroundWorker1.RunWorkerAsync(filter);
         }
+
+        private void серыйМирToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Filters filter = new GrayWorldFilter();
+            backgroundWorker1.RunWorkerAsync(filter);
+        }
     }
 }

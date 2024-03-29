@@ -100,17 +100,58 @@ namespace Labs_1
     {
         protected override Color CalculateNewPixelColor(Bitmap sourceImage, int x, int y)
         {
-            // Check if the current pixel is within the bounds of the original image
             if (x >= 50 && x < sourceImage.Width)
             {
-                // Get the color of the pixel from the original image shifted 50 pixels to the left
                 return sourceImage.GetPixel(x - 50, y);
             }
             else
             {
-                // If the current pixel is outside the range that can be shifted, return a black color
                 return Color.Black;
             }
+        }
+    }
+
+    class GrayWorldFilter : Filters
+    {
+        protected override Color CalculateNewPixelColor(Bitmap sourceImage, int x, int y)
+        {
+            Color pixelColor = sourceImage.GetPixel(x, y);
+
+            // Initialize average RGB values
+            double Avg_R = 0;
+            double Avg_G = 0;
+            double Avg_B = 0;
+
+            // Calculate sum of RGB values for the entire image
+            for (int i = 0; i < sourceImage.Width; i++)
+            {
+                for (int j = 0;j < sourceImage.Height; j++)
+                {
+                    Color color = sourceImage.GetPixel(i, j);
+                    Avg_R += color.R;
+                    Avg_G += color.G;
+                    Avg_B += color.B;
+                }
+            }
+
+            // Calculate average RGB values
+            int totalPixels = sourceImage.Width * sourceImage.Height;
+            Avg_R /= totalPixels;
+            Avg_G /= totalPixels;
+            Avg_B /= totalPixels;
+
+            // Calculate new RGB values for the current pixel using Gray World algorithm
+            int resultR = (int)(pixelColor.R * (Avg_R / Avg_R));
+            int resultG = (int)(pixelColor.G * (Avg_G / Avg_G));
+            int resultB = (int)(pixelColor.B * (Avg_B / Avg_B));
+
+            // Ensure the calculated RGB values are within the valid range [0, 255]
+            resultR = Math.Min(Math.Max(resultR, 0), 255);
+            resultG = Math.Min(Math.Max(resultG, 0), 255);
+            resultB = Math.Min(Math.Max(resultB, 0), 255);
+
+            // Return the new color for the current pixel
+            return Color.FromArgb(resultR, resultG, resultB);
         }
     }
 }
