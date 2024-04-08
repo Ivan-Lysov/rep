@@ -1,177 +1,231 @@
 #include "stack.h"
 #include "arithmetic.h"
 
-TArithmeticExpression::TArithmeticExpression(const string& _infix) {
-    if (_infix.empty()) {
-        throw("expression is empty");
+MathArithmetics::MathArithmetics(const string& _infix) 
+{
+    if (_infix.empty())
+    {
+        throw("Expression contains no data");
     }
     infix = _infix;
     RemoveSpaces(infix);
-    if (!(isCorrectInfixExpression())) {
-        throw("non-correct number of parentheses");
+    if (!(isCorrectInfixExpression()))
+        throw("Wrong number of brackets");
+}
+
+map<string, int> MathArithmetics::priority = {
+    {"^", 3},
+    {"*", 3},
+    {"/", 3},
+    {"+", 2},
+    {"-", 2},
+    {"(", 1},
+    {")", 1}
+};
+
+void MathArithmetics::RemoveSpaces(string& str) const
+{
+    str.erase(remove(str.begin(), str.end(), ' '), str.end());
+}
+
+bool MathArithmetics::IsConst(const string& s) const
+{
+    for (char symbol : s)
+    {
+        if (!isdigit(symbol) && symbol != '.')
+            return false;
+    }
+    return true;
+}
+
+bool MathArithmetics::IsOperator(char symbol) const
+{
+    return (symbol == '+' || symbol == '-' || symbol == '*' || symbol == '/' || symbol == '^');
+}
+
+bool MathArithmetics::IsParenthesis(char symbol) const
+{
+    return (symbol == '(' || symbol == ')');
+}
+
+bool MathArithmetics::IsDigitOrLetter(char symbol) const
+{
+    return (isdigit(symbol) || symbol == '.' || isalpha(symbol));
+}
+
+void MathArithmetics::SetValues()
+{
+    double value;
+    for (auto& op : operands)
+    {
+        if (!IsConst(op.first))
+        {
+            cout << "Enter value of " << op.first << ":";
+            cin >> value;
+            operands[op.first] = value;
+        }
     }
 }
 
-map<string, int> TArithmeticExpression::priority = {
-	{"^", 3},
-	{"*", 3},
-	{"/", 3},
-	{"+", 2},
-	{"-", 2},
-	{"(", 1},
-	{")", 1}
-};
-
-void TArithmeticExpression::RemoveSpaces(string& str) const {
-	str.erase(remove(str.begin(), str.end(), ' '), str.end());
-}
-
-bool TArithmeticExpression::IsConst(const string& s) const {
-	for (char c : s) {
-		if (!isdigit(c) && c != '.') {
-			return false;
-		}
-	}
-	return true;
-}
-
-bool TArithmeticExpression::IsOperator(char c) const {
-	return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
-}
-
-bool TArithmeticExpression::IsParenthesis(char c) const {
-	return (c == '(' || c == ')');
-}
-
-bool TArithmeticExpression::IsDigitOrLetter(char c) const {
-	return (isdigit(c) || c == '.' || isalpha(c));
-}
-
-void TArithmeticExpression::Parse()
+void MathArithmetics::SetValues(const vector<double>& values)
 {
-	string currentElement;
-	for (char c : infix) {
-		if (IsOperator(c) || IsParenthesis(c) || c == ' ') {
-			if (!currentElement.empty()) {
-				lexems.push_back(currentElement);
-				currentElement = "";
-			}
-			lexems.push_back(string(1, c));
-		}
-		else if (IsDigitOrLetter(c)) {
-			currentElement += c;
-		}
-	}
-	if (!currentElement.empty()) {
-		lexems.push_back(currentElement);
-	}
+    int i = 0;
+    for (auto& op : operands)
+    {
+        if (!IsConst(op.first))
+        {
+            operands[op.first] = values[i++];
+        }
+    }
 }
 
-string TArithmeticExpression::ToPostfix() {
-	Parse();
-	TStack<string> st;
-	string postfixExpression;
-	for (string item : lexems) {
-		if (item == "(") {
-			st.Push(item);
-		}
-		else if (item == ")") {
-			while (st.Top() != "(") {
-				postfixExpression += st.Top();
-				postfix.push_back(st.Top());
-				st.Pop();
-			}
-			st.Pop();
-		}
-		else if (IsOperator(item[0])) {
-			while (!st.IsEmpty() && priority[item] <= priority[st.Top()]) {
-				postfixExpression += st.Top();
-				postfix.push_back(st.Top());
-				st.Pop();
-			}
-			st.Push(item);
-		}
-		else {
-			double value = IsConst(item) ? stod(item) : 0.0;
-			operands.insert({ item, value });
-			postfix.push_back(item);
-			postfixExpression += item;
-		}
-	}
-	while (!st.IsEmpty()) {
-		postfixExpression += st.Top();
-		postfix.push_back(st.Top());
-		st.Pop();
-	}
-	return postfixExpression;
-}
-
-double TArithmeticExpression::Calculate(const map<string, double>& values)
+void MathArithmetics::Parse()
 {
-	for (auto& val : values) {
-		try {
-			operands.at(val.first) = val.second;
-		}
-		catch (out_of_range& e) {}
-	}
-	TStack<double> st;
-	double leftOperand, rightOperand;
-	for (string lexem : postfix) {
-		if (lexem == "^") {
-			rightOperand = st.Top(); st.Pop();
-			leftOperand = st.Top(); st.Pop();
-			st.Push(pow(leftOperand, rightOperand));
-		}
-		else if (lexem == "+") {
-			rightOperand = st.Top(); st.Pop();
-			leftOperand = st.Top(); st.Pop();
-			st.Push(leftOperand + rightOperand);
-		}
-		else if (lexem == "-") {
-			rightOperand = st.Top(); st.Pop();
-			leftOperand = st.Top(); st.Pop();
-			st.Push(leftOperand - rightOperand);
-		}
-		else if (lexem == "*") {
-			rightOperand = st.Top(); st.Pop();
-			leftOperand = st.Top(); st.Pop();
-			st.Push(leftOperand * rightOperand);
-		}
-		else if (lexem == "/") {
-			rightOperand = st.Top(); st.Pop();
-			leftOperand = st.Top(); st.Pop();
-			if (rightOperand == 0) { throw"Error"; }
-			st.Push(leftOperand / rightOperand);
-		}
-		else {
-			st.Push(operands[lexem]);
-		}
-	}
-	return st.Top();
+    string currentElement;
+    for (char symbol : infix) {
+        if (IsOperator(symbol) || IsParenthesis(symbol) || symbol == ' ')
+        {
+            if (!currentElement.empty())
+            {
+                lexems.push_back(currentElement);
+                currentElement = "";
+            }
+            lexems.push_back(string(1, symbol));
+        }
+        else if (IsDigitOrLetter(symbol))
+        {
+            currentElement += symbol;
+        }
+    }
+    if (!currentElement.empty())
+    {
+        lexems.push_back(currentElement);
+    }
 }
 
-void TArithmeticExpression::SetValues(const vector<double>& values) {
-	int i = 0;
-	for (auto& op : operands)
-	{
-		if (!IsConst(op.first)) {
-			operands[op.first] = values[i++];
-		}
-	}
+string MathArithmetics::ToPostfix()
+{
+    Parse();
+    TStack<string> stack;
+    string postfixExpression;
+    for (string item : lexems)
+    {
+        if (item == "(")
+            stack.Push(item);
+        else if (item == ")")
+        {
+            while (stack.Top() != "(")
+            {
+                postfixExpression += stack.Top();
+                postfix.push_back(stack.Top());
+                stack.Pop();
+            }
+            stack.Pop();
+        }
+        else if (IsOperator(item[0]))
+        {
+            while (!stack.IsEmpty() && priority[item] <= priority[stack.Top()])
+            {
+                postfixExpression += stack.Top();
+                postfix.push_back(stack.Top());
+                stack.Pop();
+            }
+            stack.Push(item);
+        }
+        else
+        {
+            double value = IsConst(item) ? stod(item) : 0.0;
+            operands.insert({ item, value });
+            postfix.push_back(item);
+            postfixExpression += item;
+        }
+    }
+    while (!stack.IsEmpty())
+    {
+        postfixExpression += stack.Top();
+        postfix.push_back(stack.Top());
+        stack.Pop();
+    }
+    return postfixExpression;
 }
 
-double TArithmeticExpression::Calculate() {
+double MathArithmetics::Calculate(const map<string, double>& values)
+{
+    for (auto& val : values)
+    {
+        try
+        {
+            operands.at(val.first) = val.second;
+        }
+        catch (out_of_range& e) {}
+    }
+    TStack<double> stack;
+    double leftOperand, rightOperand;
+    for (string lexem : postfix)
+    {
+        if (lexem == "^") {
+            rightOperand = stack.Top(); stack.Pop();
+            leftOperand = stack.Top(); stack.Pop();
+            stack.Push(pow(leftOperand, rightOperand));
+        }
+        else if (lexem == "+")
+        {
+            rightOperand = stack.Top();
+            stack.Pop();
+            leftOperand = stack.Top();
+            stack.Pop();
+            stack.Push(leftOperand + rightOperand);
+        }
+        else if (lexem == "-")
+        {
+            rightOperand = stack.Top();
+            stack.Pop();
+            leftOperand = stack.Top();
+            stack.Pop();
+            stack.Push(leftOperand - rightOperand);
+        }
+        else if (lexem == "*")
+        {
+            rightOperand = stack.Top();
+            stack.Pop();
+            leftOperand = stack.Top();
+            stack.Pop();
+            stack.Push(leftOperand * rightOperand);
+        }
+        else if (lexem == "/")
+        {
+            rightOperand = stack.Top();
+            stack.Pop();
+            leftOperand = stack.Top();
+            stack.Pop();
+            if (rightOperand == 0)
+                throw"You cant divide by zero";
+            stack.Push(leftOperand / rightOperand);
+        }
+        else
+        {
+            stack.Push(operands[lexem]);
+        }
+    }
+    return stack.Top();
+}
+
+double MathArithmetics::Calculate()
+{
     return Calculate(operands);
 }
 
-bool TArithmeticExpression::isCorrectInfixExpression()
+bool MathArithmetics::isCorrectInfixExpression()
 {
     int count = 0;
-    for (char c : infix)
+    for (char symbol : infix)
     {
-        if (c == '(') count++;
-        else if (c == ')') count--;
-        if (count < 0) return false;
+        if (symbol == '(')
+            count++;
+        else if (symbol == ')')
+            count--;
+        if (count < 0)
+            return false;
     }
     return (count == 0);
 }

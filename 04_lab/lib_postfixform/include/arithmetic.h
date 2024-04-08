@@ -1,13 +1,14 @@
 #ifndef _ARITHMETIC_H
 #define _ARITHMETIC_H
 #include <iostream>
+#include <vector>
 #include <string>
 #include <map>
-#include <vector>
 #include "stack.h"
 using namespace std;
 
-class TArithmeticExpression {
+class MathArithmetics
+{
 private:
 	string infix;
 	vector<string>  postfix;
@@ -24,12 +25,12 @@ private:
 	void RemoveSpaces(string& str) const;
 	bool isCorrectInfixExpression();
 public:
-	TArithmeticExpression(const string& _infix);
+	MathArithmetics(const string& _infix);
 	string ToPostfix();
-	string GetInfix() { return infix; }
+	string GetInfix()const{	return infix;}
 	void SetValues();
 	void SetValues(const vector<double>& values);
-	double Calculate();	
+	double Calculate();
 };
 
 #endif 

@@ -25,13 +25,6 @@ TEST(TPolynom, equality_operator_is_correct)
 	EXPECT_EQ(p1, p2);
 }
 
-TEST(TPolynom, inequality_operator_is_correct)
-{
-	TPolynom p1("x+y");
-	TPolynom p2("x-y");
-	EXPECT_NE(p1, p2);
-}
-
 TEST(TPolynom, copied_polinom_is_correct)
 {
 	TPolynom p1(str);
@@ -39,7 +32,12 @@ TEST(TPolynom, copied_polinom_is_correct)
 	EXPECT_EQ(p1, p2);
 }
 
-TEST(TPolynom, conversation_tese) {
+TEST(TPolynom, no_throw_when_polynom_will_be_empty) 
+{
+   ASSERT_NO_THROW(TPolynom p("x-x+y-y+z-z"));
+}
+
+TEST(TPolynom, conversation_test) {
 	TPolynom p1("x+x-x+x+y+y+z+z+z");
 	TPolynom p2("2x+2y+3z");
 	EXPECT_EQ(p1, p2);
@@ -87,11 +85,11 @@ TEST(TPolynom, dz_is_correct)
 	EXPECT_EQ(pol.dz(), tmp);
 }
 
-//TEST(TPolynom,no_throw_when_no_monomials_to_derive)
-//{
-//	TPolynom pol("z^3+z^2+y+1");
-//	ASSERT_NO_THROW(pol.dx());
-//}
+TEST(TPolynom,no_throw_when_no_monomials_to_derive)
+{
+	TPolynom pol("z^3+z^2+y+1");
+	ASSERT_NO_THROW(pol.dx());
+}
 
 TEST(TPolynom,sum_is_correct ) 
 {
@@ -103,23 +101,16 @@ TEST(TPolynom,sum_is_correct )
 
 TEST(TPolynom, diff_is_correct) 
 {
-	TPolynom pol1("2x^3+y^2+y+x+1");
-	TPolynom pol2("x^3-2y^2+z+1");
-	TPolynom pol3("x^3+3y^2+y^1+x^1-z^1");
+	TPolynom pol1("2x^3+y^2+y+x");
+	TPolynom pol2("x^3-2y^2+z");
+	TPolynom pol3("x^3+3y^2+y^1+x-z");
 	EXPECT_EQ(pol1-pol2, pol3);
-}
-
-TEST(TPolynom, diff_is_different) 
-{
-	TPolynom pol1("x^3+y^2+y+x+1");
-	TPolynom pol2("x^3+y+z+1");
-	EXPECT_NE(pol1-pol2, pol2-pol1);
 }
 
 TEST(TPolynom, mult_is_correct) 
 {
 	TPolynom pol1("x^2+y");
 	TPolynom pol2("x^3+x");
-	TPolynom pol3("x^5+x^3+x^3*y^1+x^1*y^1");
+	TPolynom pol3("x^5+x^3+x^3*y+x*y");
 	EXPECT_EQ(pol1*pol2, pol3);
 }

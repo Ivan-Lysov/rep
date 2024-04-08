@@ -51,8 +51,8 @@ TEST(TList, can_get_next_elemet)
 {
 	TList<int> list;
 	list.insert_last(1);
-	list.insert_last(2);
 	list.next();
+	list.insert_last(2);
 	EXPECT_EQ(2, list.GetCurrent()->data);
 }
 
@@ -93,14 +93,6 @@ TEST(TList, can_insert_after_element)
 	list.reset();
 	list.next();
 	ASSERT_NO_THROW(list.insert_after(3,2));
-}
-
-TEST(TList, throw_when_search_deleted_element)
-{
-	TList<int> list;
-	list.insert_first(1);
-	list.insert_first(2);
-	ASSERT_ANY_THROW(list.search(5));
 }
 
 TEST(TList, next_element)

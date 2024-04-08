@@ -4,26 +4,32 @@ using namespace std;
 
 int main() {
 	try {
-		TPolynom pol3;
 		string example1;
 		string example2;
+		cout << "=====================" << endl;
 		cout << "Enter polynom 1:";
 		getline(cin, example1);
-		TPolynom pol1(example1);
-		cout << pol1 << endl;
-		cout << endl;
-		//cout << "dx:" << pol1.dx() << endl;
-		//cout << "dy:" << pol1.dy() << endl;
-		//cout << "dz:" << pol1.dz() << endl;
-		///*cout << "p1(0.1, 0.2, 0.3):" << pol1(0.1, 0.2, 0.3) << endl;*/
-		//cout << "Enter polynom 2:";
-		//getline(cin, example2);
-		//TPolynom pol2(example2);
-		//cout << pol2<< endl;
-		//cout << endl;
-		//cout << "p1+p2:" << pol1 + pol2 << endl;
-		//cout << "p1-p2:" << pol1 - pol2 << endl;
-		//cout << "p1*p2:" << pol1 * pol2 << endl;
+		TPolynom polynom1(example1);
+		cout << polynom1 << endl;
+		cout << "=====================" << endl;
+		cout << "Enter polynom 2:";
+		getline(cin, example2);
+		TPolynom polynom2(example2);
+		cout << polynom2 << endl;
+		cout << "Math Arithmetic:" << endl;
+		cout << "+:" << polynom1 + polynom2 << endl;
+		cout << "-:" << polynom1 - polynom2 << endl;
+		cout << "*:" << polynom1 * polynom2 << endl;
+		cout << "=====================" << endl;
+		cout << "derivative Polynom 1:";
+		cout << "dx:" << polynom1.dx() << "\t";
+		cout << "dy:" << polynom1.dy() << "\t";
+		cout << "dz:" << polynom1.dz() << endl;
+		cout << "=====================" << endl;
+		cout << "derivative Polynom 2:";
+		cout << "dx:" << polynom2.dx() << "\t";
+		cout << "dy:" << polynom2.dy() << "\t";
+		cout << "dz:" << polynom2.dz() << endl;
 	}
 	catch (char* exp) {
 		cout << exp << endl;

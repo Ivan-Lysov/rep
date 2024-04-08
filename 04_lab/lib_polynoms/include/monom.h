@@ -15,6 +15,8 @@ class TMonom  {
 	bool operator ==(const TMonom& data)const;
 	bool operator !=(const TMonom& data)const;
 	bool operator <(const TMonom& data)const;
+	bool operator <=(const TMonom& data)const;
 	TMonom operator*(const TMonom& monom)const;
+	TMonom operator+(const TMonom& monom)const;
 };
 #endif 
