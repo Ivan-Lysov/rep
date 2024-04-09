@@ -151,53 +151,44 @@ TPolynom TPolynom::dx() const {//Спросить как лучше сделать как dx или dy
 		}
 		monoms->next();
 	}
-	return result;
+	//result.monoms->reset();
+	if (result.monoms->IsEmpty()) {
+		TPolynom tmp = TPolynom("0");
+		return tmp;
+	} else
+		return result;
 }
 
 
 TPolynom TPolynom::dy() const {//Спросить как лучше сделать как dx или dy
 	TPolynom result;
-	THeadRingList<TMonom>* list = new THeadRingList<TMonom>();
 	monoms->reset();
-
 	while (!monoms->IsEnded()) {
 		TMonom monom = monoms->GetCurrent()->data;
-		int y = (monom.degree % 100) / 10;
-
-		if (y >= 1) {
-			double new_coeff = monom.coeff * y;
+		if (monom.degree /10 % 10 != 0) {
 			int new_degree = monom.degree - 10;
+			double new_coeff = monom.coeff * (monom.degree / 10 % 10);
 			TMonom new_monom(new_coeff, new_degree);
-			list->insert_sort(new_monom);
+			result.monoms->insert_sort(new_monom);
 		}
-
 		monoms->next();
 	}
-
-	result.monoms = list;
 	return result;
 }
 
 TPolynom TPolynom::dz() const {//Спросить как лучше сделать как dx или dy
 	TPolynom result;
-	THeadRingList<TMonom>* list = new THeadRingList<TMonom>();
 	monoms->reset();
-
 	while (!monoms->IsEnded()) {
 		TMonom monom = monoms->GetCurrent()->data;
-		int z = monom.degree % 10;
-
-		if (z >= 1) {
-			double new_coeff = monom.coeff * z;
+		if (monom.degree % 10 != 0) {
 			int new_degree = monom.degree - 1;
+			double new_coeff = monom.coeff * (monom.degree % 10);
 			TMonom new_monom(new_coeff, new_degree);
-			list->insert_sort(new_monom);
+			result.monoms->insert_sort(new_monom);
 		}
-
 		monoms->next();
 	}
-
-	result.monoms = list;
 	return result;
 }
 
