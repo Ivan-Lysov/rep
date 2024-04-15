@@ -31,7 +31,7 @@ public:
 };
 
 template <typename T>
-TStack<T>::TStack(int Size) 
+TStack<T>::TStack(int Size)
 {
 	if (Size <= 0)throw "The maxSize must be greater than 0.";
 	maxSize = Size;
@@ -40,7 +40,7 @@ TStack<T>::TStack(int Size)
 }
 
 template <typename T>
-TStack<T>::TStack(const TStack<T>& stack) 
+TStack<T>::TStack(const TStack<T>& stack)
 {
 	maxSize = stack.maxSize;
 	top = stack.top;
@@ -82,7 +82,7 @@ bool TStack<T>::IsFull(void) const
 	return (top == maxSize - 1);
 }
 
-template <typename T> 
+template <typename T>
 bool TStack<T>::IsEmpty(void) const
 {
 	return (top == -1);

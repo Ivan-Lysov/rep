@@ -1,3 +1,4 @@
+
 #include "arithmetic.h"
 #include <gtest.h>
 
@@ -129,6 +130,7 @@ TEST(MathArithmetics, throw_when_have_zero_division)
 	expression.ToPostfix();
 	ASSERT_ANY_THROW(expression.Calculate());
 }
+
 
 TEST(MathArithmetics, expression_with_different_order_are_not_equal_in_sub)
 {

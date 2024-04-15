@@ -1,9 +1,6 @@
 #ifndef _THEADRINGLIST_H
 #define _THEADRINGLIST_H
-#include <iostream>
-#include <algorithm> 
 #include "list.h"
-using namespace std;
 
 template <typename T>
 class THeadRingList : public TList<T> {
@@ -12,10 +9,9 @@ private:
 public:
     THeadRingList();
     THeadRingList(const THeadRingList& ringL);
-    ~THeadRingList();
-    void InsertFirst(const T& data);
-    void insert_sort(const T& data);
-    void Clear();
+    virtual ~THeadRingList();
+    void insert_first(const T& data);
+    void insert_before(const T& who, const T& where);
 };
 
 template <typename T>
@@ -35,12 +31,11 @@ THeadRingList<T>::THeadRingList(const THeadRingList<T>& ringL) : TList<T>(ringL)
 
 template <typename T>
 THeadRingList<T>::~THeadRingList() {
-    Clear();
     delete pHead;
 }
 
 template <typename T>
-void THeadRingList<T>::InsertFirst(const T& data) {
+void THeadRingList<T>::insert_first(const T& data) {
     TList<T>::insert_first(data);
     pHead->pNext = pFirst;
     pStop = pHead;
@@ -48,34 +43,18 @@ void THeadRingList<T>::InsertFirst(const T& data) {
 }
 
 template <typename T>
-void THeadRingList<T>::insert_sort(const T& data) {
-    if (IsEmpty() || data < pFirst->data) {
-        InsertFirst(data);
+void THeadRingList<T>::insert_before(const T& who, const T& where) {
+    TNode<T>* pWhere = search(where);
+    if (pWhere == pFirst) {
+        insert_first(who);
         return;
     }
-    TNode<T>* tmp = pFirst;
-    while (tmp->pNext != pStop && tmp->pNext->data <= data) {
-        tmp = tmp->pNext;
+    TNode<T>* pPrev = pFirst;
+    while (pPrev->pNext != pWhere) {
+        pPrev = pPrev->pNext;
     }
-    if (tmp->data == data) {
-        tmp->data = tmp->data + data;
-        return;
-    }
-    insert_after(data, tmp->data);
-}
-
-template <typename T>
-void THeadRingList<T>::Clear() {
-    if (pHead == nullptr) return; 
-    TNode<T>* curr = pHead->pNext;
-    while (curr != pHead && curr != nullptr) { 
-        TNode<T>* next = curr->pNext;
-        delete curr;
-        curr = next;
-    }
-    pHead = nullptr;
-    pFirst = nullptr;
-    pLast = nullptr;
+    TNode<T>* new_node = new TNode<T>(who, pWhere);
+    pPrev->pNext = new_node;
 }
 
 #endif 

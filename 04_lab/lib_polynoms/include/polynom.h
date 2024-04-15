@@ -1,12 +1,8 @@
 #ifndef _POLYNOM_H
 #define _POLYNOM_H
-#include <iostream>
 #include <string>
-#include <map>
-#include <vector>
-#include "monom.h"
 #include <algorithm>
-#include "stack.h"
+#include "monom.h"
 #include "arithmetic.h"
 #include "THeadRingList.h"
 using namespace std;
@@ -25,16 +21,17 @@ public:
 	~TPolynom();
 	TPolynom operator +(const TPolynom& polynom);
 	TPolynom operator -(const TPolynom& polynom);
+	TPolynom operator-() const;
 	TPolynom operator *(const TPolynom& polynom);
 	const TPolynom& operator =(const TPolynom& polynom);
-	double operator ()(double x, double y, double z);
+
 	TPolynom dx() const;
 	TPolynom dy() const;
 	TPolynom dz() const;
-	bool operator==(const TPolynom& polynom) const;
+	string ToString()const;
+	bool operator==(const TPolynom&polynom) const;
 	bool operator!=(const TPolynom& polynom) const;
-	friend ostream& operator<<(ostream& out, const TPolynom& p);
-	TPolynom operator-() const;
+	friend ostream& operator<<(ostream& out, const TPolynom& polynom);
 };
 
 #endif 

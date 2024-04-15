@@ -27,7 +27,7 @@ private:
 public:
 	MathArithmetics(const string& _infix);
 	string ToPostfix();
-	string GetInfix()const{	return infix;}
+	string GetInfix()const { return infix; }
 	void SetValues();
 	void SetValues(const vector<double>& values);
 	double Calculate();

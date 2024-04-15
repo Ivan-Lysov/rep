@@ -1,7 +1,7 @@
 #include "stack.h"
 #include "arithmetic.h"
 
-MathArithmetics::MathArithmetics(const string& _infix) 
+MathArithmetics::MathArithmetics(const string& _infix)
 {
     if (_infix.empty())
     {

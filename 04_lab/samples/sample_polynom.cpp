@@ -8,9 +8,9 @@ int main() {
 		string example2;
 		cout << "=====================" << endl;
 		cout << "Enter polynom 1:";
-		//getline(cin, example1);
-		example1 = "6^1";
-		example2 = "1+x^2+y^2+z^2";
+		getline(cin, example1);
+		//example1 = "2x^2+y^2+10";
+		example2 = "x^2+y^2+z";
 		TPolynom polynom1(example1);
 		cout << polynom1 << endl;
 		cout << "=====================" << endl;
@@ -39,4 +39,3 @@ int main() {
 	}
 	return 0;
 }
-
