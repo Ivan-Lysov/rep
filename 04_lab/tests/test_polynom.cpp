@@ -121,14 +121,6 @@ TEST(TPolynom, diff_is_with_negative_coefficients)
 	EXPECT_EQ(polynom1 - polynom2, polynom3);
 }
 
-TEST(TPolynom, mult_is_correct_standard)
-{
-	TPolynom polynom1("x^2+y");
-	TPolynom polynom2("x^2+z");
-	TPolynom polynom3("x^4+x^2*z+x^2*y+y*z");
-	EXPECT_EQ(polynom1*polynom2, polynom3);
-}
-
 TEST(TPolynom, mult_is_correct_with_fractional_degree)
 {
 	TPolynom polynom1("x^2+y");

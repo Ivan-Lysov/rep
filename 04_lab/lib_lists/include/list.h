@@ -16,7 +16,7 @@
 		virtual ~TList();
 		virtual void insert_first(const T& data);
 		virtual void remove(const T& data);
-		virtual void insert_before(const T& data, const T& nextdata);
+		void insert_before(const T& data, const T& nextdata);
 		void insert_last(const T& data);
 		void insert_after(const T& data, const T& beforedata);
 		TNode<T>* search(const T& data);
@@ -29,7 +29,7 @@
 		void next();
 		void reset();
 		void insert_sort(const T& data);
-		void Sort();
+		void Sort(); //????
 	};
 
 template <typename T>
@@ -121,7 +121,7 @@ TNode<T>* TList<T>::search(const T& data) {
 		Current = Current->pNext;
 	}
 	if (Current == pStop) {
-		throw ("Element not found!");
+		return nullptr;
 	}
 	return Current;
 }
@@ -150,7 +150,7 @@ void TList<T>::insert_last(const T& data) {
 
 template <typename T>
 void TList<T>::insert_before(const T& who, const T& where) {
-	TNode<T>* pWhere = search(where);
+	TNode<T>* pWhere = search(where); // ?????
 	if (pWhere == pFirst) {
 		insert_first(who);
 		return;
@@ -165,7 +165,7 @@ void TList<T>::insert_before(const T& who, const T& where) {
 
 template <typename T>
 void TList<T>::insert_after(const T& who, const T& where) {
-	TNode<T>* pWhere = search(where);
+	TNode<T>* pWhere = search(where); //????
 	if (pWhere == pLast) {
 		insert_last(who);
 		return;
@@ -239,8 +239,8 @@ void TList<T>::insert_sort(const T& data) {
 	insert_after(data, tmp->data);
 }
 template <typename T>
-bool compare(const T& a, const T& b) {
-	return a < b; // Assuming T has a less-than operator defined
+bool compare(const T& monom1, const T& monom2) {
+	return monom1 < monom2; // Assuming T has a less-than operator defined
 }
 template <typename T>
 void TList<T>::Sort() {

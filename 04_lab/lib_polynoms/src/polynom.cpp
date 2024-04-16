@@ -15,6 +15,11 @@ TPolynom::TPolynom(const string& _name) {
 
 TPolynom::TPolynom(const THeadRingList<TMonom>* list) {
 	monoms = new THeadRingList<TMonom>(*list);
+	// TODO:
+	// 1. zeros
+	// 2. sim
+	// 3. sort
+	// 4. name
 }
 
 TPolynom::TPolynom(const TPolynom& polynom) {
@@ -55,7 +60,7 @@ string TPolynom::ToString() const {
 				firstTerm = false;
 			}
 			if (abs(coeff) != 1 || deg == 0) {
-				str += (abs(coeff) == 1 ? "" : to_string(abs(coeff))); // Omit coefficient if it's 1 or -1
+				str += (abs(coeff) == 1 ? ((coeff>0)? "1" : "1"): to_string(abs(coeff))); 
 			}
 			if (x != 0) str += "x" + ((x != 1) ? "^" + to_string(x) : "");
 			if (y != 0) str += "y" + ((y != 1) ? "^" + to_string(y) : "");
@@ -75,7 +80,7 @@ void TPolynom::ParseMonoms() {
 		str.erase(0, j);
 
 		string coefficient = monom.substr(0, monom.find_first_of("xyz"));
-		double coeff = 1.0; // Default coefficient is 1
+		double coeff = 1.0; 
 		if (!coefficient.empty()) {
 			coeff = (coefficient == "+" || coefficient == "-") ? stod(coefficient + "1") : stod(coefficient);
 		}
@@ -115,7 +120,7 @@ void TPolynom::ParseMonoms() {
 }
 
 const TPolynom& TPolynom::operator=(const TPolynom& polynom)  {
-	if (this != &polynom) {
+	if (this != &polynom) {//проверка на самоприсваивание
 		name = polynom.name;
 		delete monoms;
 		monoms = new THeadRingList<TMonom>(*(polynom.monoms));
@@ -126,7 +131,7 @@ const TPolynom& TPolynom::operator=(const TPolynom& polynom)  {
 TPolynom TPolynom::operator+(const TPolynom& polynom) {
 	TPolynom result(*this);
 	polynom.monoms->reset();
-	while (!polynom.monoms->IsEnded()) {
+	while (!polynom.monoms->IsEnded()) { // TODO: rewrite
 		TMonom current = polynom.monoms->GetCurrent()->data;
 		result.monoms->insert_sort(current);
 		polynom.monoms->next();
@@ -135,9 +140,7 @@ TPolynom TPolynom::operator+(const TPolynom& polynom) {
 }
 
 TPolynom TPolynom::operator-(const TPolynom& polynom) {
-	TPolynom result(*this);
-	result = result+(-polynom);
-	return result;
+	return (*this) + (-polynom);
 }
 
 TPolynom TPolynom::operator-() const {
@@ -159,7 +162,7 @@ TPolynom TPolynom::operator*(const TPolynom& polynom) {
 			TMonom m1 = monoms->GetCurrent()->data;
 			TMonom m2 = polynom.monoms->GetCurrent()->data;
 			TMonom m3 = m1 * m2;
-			result.monoms->insert_sort(m3);
+			result.monoms->insert_last(m3); // sim, zeros,...
 			polynom.monoms->next();
 		}
 		monoms->next();
@@ -176,7 +179,7 @@ TPolynom TPolynom::dx() const {
 			int new_degree = monom.degree - 100;
 			double new_coeff = monom.coeff * (monom.degree / 100);
 			TMonom new_monom(new_coeff, new_degree);
-			result.monoms->insert_sort(new_monom);
+			result.monoms->insert_last(new_monom);
 		}
 		monoms->next();
 	}
@@ -195,7 +198,7 @@ TPolynom TPolynom::dy() const {
 			double new_coeff = monom.coeff * (monom.degree / 10);
 			monom.degree = new_degree;
 			monom.coeff = new_coeff;
-			result.monoms->insert_sort(monom);
+			result.monoms->insert_last(monom);
 		}
 		monoms->next();
 	}

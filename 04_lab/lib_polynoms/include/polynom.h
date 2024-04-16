@@ -28,6 +28,9 @@ public:
 	TPolynom dx() const;
 	TPolynom dy() const;
 	TPolynom dz() const;
+
+	double operator()(double x, double y, double z) const;
+
 	string ToString()const;
 	bool operator==(const TPolynom&polynom) const;
 	bool operator!=(const TPolynom& polynom) const;
