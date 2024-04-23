@@ -11,6 +11,7 @@ public:
     THeadRingList(const THeadRingList& ringL);
     virtual ~THeadRingList();
     void insert_first(const T& data);
+    TNode<T>* GetHead() const;
 };
 
 template <typename T>
@@ -40,5 +41,11 @@ void THeadRingList<T>::insert_first(const T& data) {
     pStop = pHead;
     pLast->pNext = pHead;
 }
+
+template <class T>
+TNode<T>* THeadRingList<T>::GetHead() const {
+    return pHead;
+}
+
 
 #endif 

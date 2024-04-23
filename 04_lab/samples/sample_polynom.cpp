@@ -8,9 +8,9 @@ int main() {
 		string example2;
 		cout << "=====================" << endl;
 		cout << "Enter polynom 1:";
-		getline(cin, example1);
-		//example1 = "2x^2+y^2+10";
-		example2 = "x^2+y^2+z";
+		//getline(cin, example1);
+		example1 = "0";
+		example2 = "x^2+y^2+z+10";
 		TPolynom polynom1(example1);
 		cout << polynom1 << endl;
 		cout << "=====================" << endl;
@@ -33,7 +33,10 @@ int main() {
 		cout << "dx:" << polynom2.dx() << "\t";
 		cout << "dy:" << polynom2.dy() << "\t";
 		cout << "dz:" << polynom2.dz() << endl;
+		cout << "polynom1(1, 2, 3):" << polynom1(1, 2, 3) << endl;
+		cout << "polynom2(1, 2, 3):" << polynom2(1, 2, 3) << endl;
 	}
+
 	catch (char* exp) {
 		cout << exp << endl;
 	}
