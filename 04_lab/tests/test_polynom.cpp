@@ -2,6 +2,10 @@
 #include <gtest.h>
 const string str="x+y+z+1";
 
+// x^2*y^3 - 3*z^2*x^5
+// -x^2*y^3 - 3*z^2*x^5
+// x + 1 - 2*x + 4
+
 TEST(TPolynom, create_polinom)
 {
 	ASSERT_NO_THROW(TPolynom polynom(str));

@@ -6,8 +6,8 @@ using namespace std;
 
 class TMonom  {
  public:
-	double coeff;
-	int degree;
+	double coeff; // private
+	int degree; // private
 
 	TMonom();
 	TMonom(const TMonom& monom);

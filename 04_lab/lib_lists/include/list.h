@@ -22,7 +22,7 @@
 		void insert_after(const T& data, const T& beforedata);
 		TNode<T>* search(const T& _data);
 		TNode<T>* GetCurrent() const;
-		void Clear();
+		virtual void Clear(); // virtual
 		int GetSize() const;
 		bool IsEmpty() const;
 		bool IsFull() const;
@@ -30,7 +30,7 @@
 		void next();
 		void reset();
 		void insert_sort(const T& data);
-		void Sort(); //????
+		void Sort(); // virtual
 	};
 
 template <typename T>
@@ -99,7 +99,7 @@ TList<T>::~TList() {
 
 template <typename T>
 bool TList<T>::IsFull() const {
-	return !IsEmpty;
+	return !IsEmpty; // !!!
 	//bool TList<T>::IsFull() const {
 	//	TNode<T>* tmp = new TNode<T>();
 	//	if (tmp == nullptr)
@@ -248,17 +248,17 @@ void TList<T>::insert_sort(const T& data) {
 	while (tmp->pNext != pStop && tmp->pNext->data <= data) {
 		tmp = tmp->pNext;
 	}
-	if (tmp->data == data) {
+	if (tmp->data == data) { // !!!!!! remove
 		tmp->data = tmp->data + data;
 		return;
 	}
-	insert_after(data, tmp->data);
+	insert_after(data, tmp->data); // check when insert last
 }
-template <typename T>
+template <typename T> // ג פאיכ TNode
 bool operator < (const T& node1, const T& node2) {
 	return node1 < node2;
 }
-template <typename T>
+template <typename T> // ג פאיכ TNode
 bool operator > (const T& node1, const T& node2) {
 	return node1 > node2;
 }

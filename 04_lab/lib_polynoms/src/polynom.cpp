@@ -86,7 +86,7 @@ string TPolynom::ToString() const {
 	return str.empty() ? "0" : str; // Возвращаем "0", если строка пуста
 }
 
-void TPolynom::ParseMonoms(const string& _name) {
+void TPolynom::ParseMonoms(const string& _name) { ///!!!
 	string str = _name;
 	while (!str.empty()) {
 		TMonom tmp;
@@ -171,10 +171,10 @@ TPolynom TPolynom::operator+(const TPolynom& polynom)
 {
 	//cout << "Current polynom: " << ToString() << std::endl;
 	//cout << "Polynom to add: " << polynom.ToString() << std::endl;
-	if (monoms->IsEmpty()) {
+	if (monoms->IsEmpty()) { //!!!!!
 		return polynom;
 	}
-	if (polynom.monoms->IsEmpty()) {
+	if (polynom.monoms->IsEmpty()) {//!!!!!
 		return *this;
 	}
 
@@ -186,19 +186,16 @@ TPolynom TPolynom::operator+(const TPolynom& polynom)
 	{
 		TMonom monom1 = monoms->GetCurrent()->data;
 		TMonom monom2 = polynom.monoms->GetCurrent()->data;
-
 		if (monom1 == monom2)
 		{
 			double coef1 = monom1.coeff;
 			double coef2 = monom2.coeff;
 			double coef_res = coef1 + coef2;
-
 			if (coef_res != 0)
 			{
 				monom2.coeff = coef_res;
 				list->insert_last(monom2);
 			}
-
 			monoms->next();
 			polynom.monoms->next();
 		}
@@ -213,13 +210,11 @@ TPolynom TPolynom::operator+(const TPolynom& polynom)
 			monoms->next();
 		}
 	}
-
 	while (!monoms->IsEnded())
 	{
 		list->insert_last(monoms->GetCurrent()->data);
 		monoms->next();
 	}
-
 	while (!polynom.monoms->IsEnded())
 	{
 		list->insert_last(polynom.monoms->GetCurrent()->data);
@@ -227,7 +222,7 @@ TPolynom TPolynom::operator+(const TPolynom& polynom)
 	}
 
 	TPolynom result;
-	result.monoms = list;
+	result.monoms = list; // memory leak
 	result.name = result.ToString();
 	return result;
 }
@@ -264,18 +259,19 @@ TPolynom TPolynom::operator*(const TPolynom& p)
 			TMonom m2 = p.monoms->GetCurrent()->data;
 			double k = m.coeff;
 			double k2 = m2.coeff;
-			double k3 = k * k2;
+			double k3 = k * k2; // == 0
 			int d = m.degree;
 			int d2 = m2.degree;
-			int deg = d + d2;
+			int deg = d + d2; // > 999
 			TMonom mon(k3, deg);
 			list->insert_last(mon);
 			p.monoms->next();
 		}
 		monoms->next();
 	}
+	// sim monoms
 	TPolynom result;
-	result.monoms = list;
+	result.monoms = list; // memory leak
 	result.name = result.ToString();
 	return result;
 }

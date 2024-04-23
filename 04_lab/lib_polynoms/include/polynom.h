@@ -3,7 +3,7 @@
 #include <string>
 #include <algorithm>
 #include "monom.h"
-#include "arithmetic.h"
+//#include "arithmetic.h"
 #include "THeadRingList.h"
 using namespace std;
 
@@ -15,6 +15,7 @@ private:
 	void ParseMonoms(const string& _name);
 	
 	void delNULL();
+	void CombineSimilarMonoms();
 	
 public:
 	TPolynom();
@@ -29,7 +30,7 @@ public:
 	TPolynom operator *(const TPolynom& polynom);
 	const TPolynom& operator =(const TPolynom& polynom);
 
-	void CombineSimilarMonoms();
+
 	TPolynom dx() const;
 	TPolynom dy() const;
 	TPolynom dz() const;	
