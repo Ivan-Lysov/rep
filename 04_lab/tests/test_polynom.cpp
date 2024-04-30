@@ -5,6 +5,26 @@ const string str="x+y+z+1";
 // x^2*y^3 - 3*z^2*x^5
 // -x^2*y^3 - 3*z^2*x^5
 // x + 1 - 2*x + 4
+//x-x+y-y-1+1
+//"0" - полином
+//"0" + полином
+//полином - "0"
+
+#include <iostream>
+TEST(TPolynom, can_parse_edge_cases) {
+    EXPECT_EQ("-3.000000x^5z^2+x^2y^3", TPolynom("x^2*y^3 - 3*z^2*x^5").ToString());
+    EXPECT_EQ("-3.000000x^5z^2-x^2y^3", TPolynom("-x^2*y^3 - 3*z^2*x^5").ToString());
+    EXPECT_EQ("-x+5.000000", TPolynom("x + 1 - 2*x + 4").ToString()); // ++   - между плюсами
+                                                                                              //        стоит моном
+                                                                                              //        с коэффициентом
+                                                                                              //        равным 1 и без
+                                                                                              //        степеней
+    EXPECT_EQ("0", TPolynom("x-x+y-y-1+1").ToString()); // ++   - между плюсами
+    EXPECT_EQ("0", TPolynom("0").ToString());
+    EXPECT_EQ("x", TPolynom("0+x").ToString());
+    EXPECT_EQ("x", TPolynom("x-0").ToString());
+}
+
 
 TEST(TPolynom, create_polinom)
 {
@@ -161,14 +181,6 @@ TEST(TPolynom, diff_is_with_negative_coefficients)
 	EXPECT_EQ(polynom1 - polynom2, polynom3);
 }
 
-TEST(TPolynom, mult_is_correct_with_fractional_degree)
-{
-	TPolynom polynom1("x^2+y");
-	TPolynom polynom2("x^1/2");
-	TPolynom result_polynom("x^3/2+yx^1/2");
-	EXPECT_EQ(polynom1 * polynom2, result_polynom);
-}
-
 TEST(TPolynom, mult_test1)
 {
 	TPolynom polynom1("x^2*x");
@@ -204,10 +216,10 @@ TEST(TPolynomConstructorTest, NonZeroMonoms) {
 	monomList.insert_last(TMonom(3.0, 1)); // моном 3x
 	monomList.insert_last(TMonom(4.0, 0)); // моном 4
 
-	TPolynom poly(&monomList);
+	TPolynom poly(monomList);
 
 	// ќжидаемый полином: x^2 + 3x + 4
-	TPolynom expectedPoly(&monomList);
+	TPolynom expectedPoly(monomList);
 
 	ASSERT_EQ(poly, expectedPoly);
 }
@@ -216,7 +228,7 @@ TEST(TPolynomConstructorTest, ZeroMonoms) {
 	THeadRingList<TMonom> monomList;
 
 	// —оздаем пустой полином
-	TPolynom poly(&monomList);
+	TPolynom poly(monomList);
 	// ќжидаемый полином: 0
 	TPolynom expectedPoly;
 

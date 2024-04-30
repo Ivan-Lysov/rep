@@ -6,13 +6,11 @@ using namespace std;
 
 class TMonom  {
  public:
-	double coeff; // private
-	int degree; // private
+	double coeff; // private добавить в private
+	int degree; // private добавить в private
 
 	TMonom();
-	TMonom(const TMonom& monom);
 	TMonom(double _coeff, int _degree);
-	TMonom& operator=(const TMonom& monom);
 	bool operator ==(const TMonom& data)const;
 	bool operator !=(const TMonom& data)const;
 	bool operator <(const TMonom& data)const;

@@ -1,32 +1,28 @@
 #include "polynom.h"
 //#include "stack.h"
 //#include "arithmetic.h"
+#include <sstream>
 
 TPolynom::TPolynom() {
-	monoms = new THeadRingList<TMonom>();
 	name = "0";
-	if (monoms->IsEmpty()) {
-		// Вставляем нулевой моном
-		monoms->insert_first(TMonom(0, 0));
-	}
+    monoms.insert_first(TMonom(0, 0));
 }
 
 TPolynom::TPolynom(const string& _name) {
-	monoms = new THeadRingList<TMonom>();
 	name = _name;
 	ParseMonoms(_name);
+    CombineSimilarMonoms();
 }
 
-TPolynom::TPolynom(const THeadRingList<TMonom>* list) {
-	if (list != nullptr && !list->IsEmpty()) {
-		monoms = new THeadRingList<TMonom>(*list); // Копируем список
+TPolynom::TPolynom(const THeadRingList<TMonom>& list) {
+	if (!list.IsEmpty()) {
+		monoms = list;
 		delNULL();
 		CombineSimilarMonoms();
-		monoms->Sort();
+		monoms.Sort();
 	}
 	else {
-		monoms = new THeadRingList<TMonom>();
-		monoms->insert_first(TMonom(0, 0));
+		monoms.insert_first(TMonom(0, 0));
 	}
 }
 //	// Удаляем нулевые мономы
@@ -34,32 +30,23 @@ TPolynom::TPolynom(const THeadRingList<TMonom>* list) {
 //	// Объединяем одинаковые мономы
 //	CombineSimilarMonoms();
 //	// Упорядочиваем список
-//	monoms->Sort();
+//	monoms.Sort();
 //}
 
-TPolynom::TPolynom(const TPolynom& polynom) {
-	name = polynom.name;
-	monoms = new THeadRingList<TMonom>(*(polynom.monoms));
-}
-
-TPolynom::~TPolynom() {
-	delete monoms;
-}
-
-string TPolynom::ToString() const {
+string TPolynom::ToString() const {//может как-либо разбить метод на более мелкие функции чтобы этот метод был короче
 	string str;
-	if (monoms->IsEmpty()) {
-		return "0"; // Возвращаем "0", если полином пустой
+	if (monoms.IsEmpty()) {
+		return "0"; 
 	}
 
-	THeadRingList<TMonom> sortedMonoms(*monoms);
+	THeadRingList<TMonom> sortedMonoms(monoms);
 	sortedMonoms.Sort();
 
 	bool firstTerm = true;
 	sortedMonoms.reset();
 	while (!sortedMonoms.IsEnded()) {
-		int deg = sortedMonoms.GetCurrent()->data.degree;
-		double coeff = sortedMonoms.GetCurrent()->data.coeff;
+		int deg = sortedMonoms.GetCurrent().degree;
+		double coeff = sortedMonoms.GetCurrent().coeff;
 		int x = deg / 100;
 		int y = (deg % 100) / 10;
 		int z = deg % 10;
@@ -75,7 +62,7 @@ string TPolynom::ToString() const {
 			}
 			if (abs(coeff) != 1 || deg == 0) {
 				// Используем спецификатор формата "%.2f" для вывода с двумя знаками после запятой
-				str += (abs(coeff) == 1 ? ((coeff > 0) ? "1" : "1") : std::to_string(abs(coeff)));
+				str += (abs(coeff) == 1 ? ((coeff > 0) ? "" : "1") : std::to_string(abs(coeff)));
 			}
 			if (x != 0) str += "x" + ((x != 1) ? "^" + std::to_string(x) : "");
 			if (y != 0) str += "y" + ((y != 1) ? "^" + std::to_string(y) : "");
@@ -86,106 +73,78 @@ string TPolynom::ToString() const {
 	return str.empty() ? "0" : str; // Возвращаем "0", если строка пуста
 }
 
-void TPolynom::ParseMonoms(const string& _name) { ///!!!
-	string str = _name;
-	while (!str.empty()) {
-		TMonom tmp;
-		int degree = 0;
-		size_t j = str.find_first_of("+-", 1);
-		string monom = str.substr(0, j);
-		str.erase(0, j);
+void TPolynom::ParseMonoms(const string& _name) {
+    istringstream stream(_name);
 
-		// Получаем коэффициент монома
-		string coefficient = monom.substr(0, monom.find_first_of("xyz"));
-		if (coefficient.empty() || coefficient == "+") {
-			tmp.coeff = 1;
-		}
-		else if (coefficient == "-") {
-			tmp.coeff = -1;
-		}
-		else {
-			tmp.coeff = stod(coefficient);
-		}
+    int sign = 1;
+    while (!stream.eof()) {
+        TMonom tmp(0, 0);
 
-		// Удаляем из строки коэффициент монома
-		monom.erase(0, monom.find_first_of("xyz"));
+        if (stream.peek() == '-') {
+            sign = -1;
+            stream.ignore(); // пропускаем минус
+        }
 
-		// Получаем степень монома
-		for (size_t i = 0; i < monom.size(); ++i) {
-			if (isalpha(monom[i])) {
-				int exp = 1;
-				if (monom[i + 1] == '^') {
-					size_t exp_start = i + 2;
-					while (isdigit(monom[exp_start])) {
-						exp_start++;
-					}
-					exp = stoi(monom.substr(i + 2, exp_start - i - 2));
-				}
-				switch (monom[i]) {
-				case 'x':
-					degree += exp * 100;
-					break;
-				case 'y':
-					degree += exp * 10;
-					break;
-				case 'z':
-					degree += exp * 1;
-					break;
-				default:
-					throw std::invalid_argument("Invalid monom format");
-				}
-			}
-		}
-		tmp.degree = degree;
+        if (!(stream >> tmp.coeff)) {
+            tmp.coeff = 1.0;
+            stream.clear(); // снимает состояние ошибки
+        }
 
-		// Вставляем моном в полином, если его коэффициент не равен 0
-		if (tmp.coeff != 0) {
-			monoms->insert_sort(tmp);
-		}
-	}
-	// Обновляем строковое представление полинома
+        tmp.coeff *= sign;
+
+        char c;
+        while (stream >> c) {
+            if (c == ' ' || c == '*') {
+                continue;
+            }
+            if (c == '+' || c == '-') {
+                sign = (c == '-') ? -1 : 1;
+                break;
+            }
+
+            int degree_component;
+            if (stream.peek() == '^') {
+                stream.ignore();
+                stream >> degree_component;
+            } else {
+                degree_component = 1;
+            }
+
+            const int components = 'z' - 'x';
+            int component_index = c - 'x';
+            tmp.degree += degree_component * pow(10, (components - component_index));
+        }
+
+        if (tmp.coeff != 0) {
+            monoms.insert_sort(tmp);
+        }
+    }
+
 	name = ToString();
 }
 
-
-const TPolynom& TPolynom::operator=(const TPolynom& polynom) {
-	if (this != &polynom) {//проверка на самоприсваивание
-		name = polynom.name;
-		delete monoms;
-		monoms = new THeadRingList<TMonom>(*(polynom.monoms));
-	}
-	return *this;
-}
+//Старая реализация +
 //TPolynom TPolynom::operator+(const TPolynom& polynom) {
 //	TPolynom result(*this);
-//	polynom.monoms->reset();
-//	while (!polynom.monoms->IsEnded()) { // TODO: rewrite
-//		TMonom current = polynom.monoms->GetCurrent()->data;
-//		result.monoms->insert_sort(current);
-//		polynom.monoms->next();
+//	polynom.monoms.reset();
+//	while (!polynom.monoms.IsEnded()) { // TODO: rewrite
+//		TMonom current = polynom.monoms.GetCurrent();
+//		result.monoms.insert_sort(current);
+//		polynom.monoms.next();
 //	}
 //	return result;
 //}
 
 TPolynom TPolynom::operator+(const TPolynom& polynom)
 {
-	//cout << "Current polynom: " << ToString() << std::endl;
-	//cout << "Polynom to add: " << polynom.ToString() << std::endl;
-	if (monoms->IsEmpty()) { //!!!!!
-		return polynom;
-	}
-	if (polynom.monoms->IsEmpty()) {//!!!!!
-		return *this;
-	}
+	THeadRingList<TMonom> list;
+	monoms.reset();
+	polynom.monoms.reset();
 
-	THeadRingList<TMonom>* list = new THeadRingList<TMonom>();
-	monoms->reset();
-	polynom.monoms->reset();
-
-	while (!monoms->IsEnded() && !polynom.monoms->IsEnded())
+	while (!monoms.IsEnded() && !polynom.monoms.IsEnded())
 	{
-		TMonom monom1 = monoms->GetCurrent()->data;
-		TMonom monom2 = polynom.monoms->GetCurrent()->data;
+		TMonom monom1 = monoms.GetCurrent();
+		TMonom monom2 = polynom.monoms.GetCurrent();
 		if (monom1 == monom2)
 		{
 			double coef1 = monom1.coeff;
@@ -194,35 +153,35 @@ TPolynom TPolynom::operator+(const TPolynom& polynom)
 			if (coef_res != 0)
 			{
 				monom2.coeff = coef_res;
-				list->insert_last(monom2);
+				list.insert_last(monom2);
 			}
-			monoms->next();
-			polynom.monoms->next();
+			monoms.next();
+			polynom.monoms.next();
 		}
 		else if (monom2 < monom1)
 		{
-			list->insert_last(monom2);
-			polynom.monoms->next();
+			list.insert_last(monom2);
+			polynom.monoms.next();
 		}
 		else
 		{
-			list->insert_last(monom1);
-			monoms->next();
+			list.insert_last(monom1);
+			monoms.next();
 		}
 	}
-	while (!monoms->IsEnded())
+	while (!monoms.IsEnded())
 	{
-		list->insert_last(monoms->GetCurrent()->data);
-		monoms->next();
+		list.insert_last(monoms.GetCurrent());
+		monoms.next();
 	}
-	while (!polynom.monoms->IsEnded())
+	while (!polynom.monoms.IsEnded())
 	{
-		list->insert_last(polynom.monoms->GetCurrent()->data);
-		polynom.monoms->next();
+		list.insert_last(polynom.monoms.GetCurrent());
+		polynom.monoms.next();
 	}
 
 	TPolynom result;
-	result.monoms = list; // memory leak
+	result.monoms = list;
 	result.name = result.ToString();
 	return result;
 }
@@ -234,116 +193,111 @@ TPolynom TPolynom::operator-(const TPolynom& polynom) {
 
 TPolynom TPolynom::operator-() const {
 	TPolynom result(*this);
-	result.monoms->reset();
-	while (!result.monoms->IsEnded()) {
-		result.monoms->GetCurrent()->data.coeff *= -1;
-		result.monoms->next();
+	result.monoms.reset();
+	while (!result.monoms.IsEnded()) {
+		result.monoms.GetCurrent().coeff *= -1;
+		result.monoms.next();
 	}
 	return result;
 }
 
 TPolynom TPolynom::operator*(const TPolynom& p)
 {
-	if (monoms->IsEmpty() || p.monoms->IsEmpty()) {
-		return TPolynom(); // Возвращаем нулевой полином
-	}
-	THeadRingList<TMonom>* list = new THeadRingList<TMonom>();
-	monoms->reset();
-	p.monoms->reset();
-	while (!monoms->IsEnded())
+	THeadRingList<TMonom> list;
+	monoms.reset();
+	p.monoms.reset();
+	while (!monoms.IsEnded())
 	{
-		TMonom m = monoms->GetCurrent()->data;
-		p.monoms->reset();
-		while (!p.monoms->IsEnded())
+		TMonom m = monoms.GetCurrent();
+		p.monoms.reset();
+		while (!p.monoms.IsEnded())
 		{
-			TMonom m2 = p.monoms->GetCurrent()->data;
+			TMonom m2 = p.monoms.GetCurrent();
 			double k = m.coeff;
 			double k2 = m2.coeff;
-			double k3 = k * k2; // == 0
+			double k3 = k * k2; // == 0 
 			int d = m.degree;
 			int d2 = m2.degree;
-			int deg = d + d2; // > 999
+			int deg = d + d2; // > 999 можно типо выйти за границы
 			TMonom mon(k3, deg);
-			list->insert_last(mon);
-			p.monoms->next();
+			list.insert_last(mon);
+			p.monoms.next();
 		}
-		monoms->next();
+		monoms.next();
 	}
+	//привести подобные
 	// sim monoms
 	TPolynom result;
-	result.monoms = list; // memory leak
+	result.monoms = list;
 	result.name = result.ToString();
 	return result;
 }
 
 TPolynom TPolynom::dx() const {
-	if (monoms->IsEmpty()) return TPolynom();
 	TPolynom result;
-	monoms->reset();
-	while (!monoms->IsEnded()) {
-		TMonom monom = monoms->GetCurrent()->data;
+	monoms.reset();
+	while (!monoms.IsEnded()) {
+		TMonom monom = monoms.GetCurrent();
 		if (monom.degree >= 100) {
 			int new_degree = monom.degree - 100;
 			double new_coeff = monom.coeff * (monom.degree / 100);
 			TMonom new_monom(new_coeff, new_degree);
-			result.monoms->insert_last(new_monom);
+			result.monoms.insert_last(new_monom);
 		}
-		monoms->next();
+		monoms.next();
 	}
 	return result;
 }
 
 TPolynom TPolynom::dy() const {
-	if (monoms->IsEmpty()) return TPolynom();
 	TPolynom result;
-	monoms->reset();
-	while (!monoms->IsEnded()) {
-		TMonom monom = monoms->GetCurrent()->data;
-		int deg = monoms->GetCurrent()->data.degree;
+	monoms.reset();
+	while (!monoms.IsEnded()) {
+		TMonom monom = monoms.GetCurrent();
+		int deg = monoms.GetCurrent().degree;
 		int y = (deg % 100) / 10;
 		if (y >= 1) {
 			int new_degree = monom.degree - 10;
 			double new_coeff = monom.coeff * (monom.degree / 10);
 			monom.degree = new_degree;
 			monom.coeff = new_coeff;
-			result.monoms->insert_last(monom);
+			result.monoms.insert_last(monom);
 		}
-		monoms->next();
+		monoms.next();
 	}
 	return result;
 }
 
 TPolynom TPolynom::dz() const {
-	if (monoms->IsEmpty()) return TPolynom();
 	TPolynom result;
-	monoms->reset();
-	while (!monoms->IsEnded()) {
-		TMonom monom = monoms->GetCurrent()->data;
-		int deg = monoms->GetCurrent()->data.degree;
+	monoms.reset();
+	while (!monoms.IsEnded()) {
+		TMonom monom = monoms.GetCurrent();
+		int deg = monoms.GetCurrent().degree;
 		int z = deg % 10;
 		if (z >= 1) {
 			int new_degree = monom.degree - 1;
 			double new_coeff = monom.coeff * monom.degree;
 			monom.degree = new_degree;
 			monom.coeff = new_coeff;
-			result.monoms->insert_sort(monom);
+			result.monoms.insert_sort(monom);
 		}
-		monoms->next();
+		monoms.next();
 	}
 	return result;
 }
 
 bool TPolynom::operator==(const TPolynom& polynom) const {
-	monoms->reset();
-	polynom.monoms->reset();
-	while (!monoms->IsEnded() && !polynom.monoms->IsEnded()) {
-		if (monoms->GetCurrent()->data != polynom.monoms->GetCurrent()->data) {
+	monoms.reset();
+	polynom.monoms.reset();
+	while (!monoms.IsEnded() && !polynom.monoms.IsEnded()) {
+		if (monoms.GetCurrent() != polynom.monoms.GetCurrent()) {
 			return false;
 		}
-		monoms->next();
-		polynom.monoms->next();
+		monoms.next();
+		polynom.monoms.next();
 	}
-	return (monoms->IsEnded() && polynom.monoms->IsEnded());
+	return (monoms.IsEnded() && polynom.monoms.IsEnded());
 }
 
 bool TPolynom::operator!=(const TPolynom& polynom) const {
@@ -356,68 +310,59 @@ ostream& operator<<(ostream& out, const TPolynom& polynom) {
 }
 
 void TPolynom::delNULL() {
-	if (monoms == nullptr || monoms->IsEmpty())
-		return;
-
-	monoms->reset(); // Reset the list to the beginning
-	while (!monoms->IsEnded()) {
-		if (monoms->GetCurrent()->data.coeff == 0.0) {
-			// Remove the current node if coefficient is zero
-			monoms->remove(monoms->GetCurrent()->data);
+	monoms.reset(); 
+	while (!monoms.IsEnded()) {
+		if (monoms.GetCurrent().coeff == 0.0) {
+			
+			monoms.remove(monoms.GetCurrent());
 		}
 		else {
-			monoms->next(); // Move to the next node
+			monoms.next(); 
 		}
 	}
 }
 
 void TPolynom::CombineSimilarMonoms() {
-	if (monoms == nullptr || monoms->IsEmpty()) {
+	if (monoms.IsEmpty()) {
 		return;
 	}
 
-	THeadRingList<TMonom>* combinedMonoms = new THeadRingList<TMonom>();
-	monoms->reset();
+	THeadRingList<TMonom> combinedMonoms;
+	monoms.reset();
 	double coeffSum = 0.0;
-	int currentDegree = monoms->GetCurrent()->data.degree;
+	int currentDegree = monoms.GetCurrent().degree;
 
-	while (!monoms->IsEnded()) {
-		if (monoms->GetCurrent()->data.degree == currentDegree) {
-			coeffSum += monoms->GetCurrent()->data.coeff;
+	while (!monoms.IsEnded()) {
+		if (monoms.GetCurrent().degree == currentDegree) {
+			coeffSum += monoms.GetCurrent().coeff;
 		}
 		else {
 			if (coeffSum != 0.0) {
 				TMonom combinedTerm(coeffSum, currentDegree);
-				combinedMonoms->insert_last(combinedTerm);
+                combinedMonoms.insert_last(combinedTerm);
 				coeffSum = 0.0;
 			}
-			currentDegree = monoms->GetCurrent()->data.degree;
-			coeffSum = monoms->GetCurrent()->data.coeff;
+			currentDegree = monoms.GetCurrent().degree;
+			coeffSum = monoms.GetCurrent().coeff;
 		}
-		monoms->next();
+		monoms.next();
 	}
 
-	// Add the last term
 	if (coeffSum != 0.0) {
 		TMonom combinedTerm(coeffSum, currentDegree);
-		combinedMonoms->insert_last(combinedTerm);
+        combinedMonoms.insert_last(combinedTerm);
 	}
 
-	// Clear the original list and replace it with the combined list
-	delete monoms;
-	monoms = combinedMonoms;
+    monoms = combinedMonoms;
 }
 
 
 double TPolynom::operator()(double x, double y, double z) const {
-	if (monoms->IsEmpty()) {
-		return 0.0;
-	}
 	double result = 0.0;
 
-    monoms->reset();
-    while (!monoms->IsEnded()) {
-        TMonom monom = monoms->GetCurrent()->data;
+    monoms.reset();
+    while (!monoms.IsEnded()) {
+        TMonom monom = monoms.GetCurrent();
         double monomValue = monom.coeff;
 
         int deg = monom.degree;
@@ -425,13 +370,11 @@ double TPolynom::operator()(double x, double y, double z) const {
         int yExp = (deg % 100) / 10;
         int zExp = deg % 10;
 
-        // Вычисление значения монома для заданных значений переменных x, y и z
         monomValue *= pow(x, xExp) * pow(y, yExp) * pow(z, zExp);
 
-        // Добавление значения монома к общему результату
         result += monomValue;
 
-        monoms->next();
+        monoms.next();
     }
 
     return result;

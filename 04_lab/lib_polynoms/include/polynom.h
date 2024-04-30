@@ -10,7 +10,7 @@ using namespace std;
 class TPolynom {
 private:
 	string name;
-	THeadRingList<TMonom>* monoms;
+	THeadRingList<TMonom> monoms;
 
 	void ParseMonoms(const string& _name);
 	
@@ -20,22 +20,18 @@ private:
 public:
 	TPolynom();
 	TPolynom(const string& _name);
-	TPolynom(const THeadRingList<TMonom>* list);
-	TPolynom(const TPolynom& polynom);
-	~TPolynom();
+	TPolynom(const THeadRingList<TMonom>& list);
 
 	TPolynom operator+(const TPolynom& p);
 	TPolynom operator -(const TPolynom& polynom);
 	TPolynom operator-() const;
 	TPolynom operator *(const TPolynom& polynom);
-	const TPolynom& operator =(const TPolynom& polynom);
-
 
 	TPolynom dx() const;
 	TPolynom dy() const;
 	TPolynom dz() const;	
 
-	double operator()(double x, double y, double z) const;//написать
+	double operator()(double x, double y, double z) const;
 
 	string ToString()const;
 	bool operator==(const TPolynom&polynom) const;

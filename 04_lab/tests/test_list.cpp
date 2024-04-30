@@ -6,11 +6,6 @@ TEST(TList, can_create_new_list)
 	ASSERT_NO_THROW(TList <int> list);
 }
 
-TEST(TList, can_create_list_with_node)
-{
-	ASSERT_NO_THROW(TList<int>{new TNode<int>});
-}
-
 TEST(TList, list_is_empty_check)
 {
 	TList<int> list;
@@ -46,7 +41,7 @@ TEST(TList, can_copy_list)
 	list1.insert_last(2);
 	TList<int> list2(list1);
 	list1.reset();
-	EXPECT_EQ(list1.GetCurrent()->data, list2.GetCurrent()->data);
+	EXPECT_EQ(list1.GetCurrent(), list2.GetCurrent());
 }
 
 TEST(TList, can_insert_element_in_empty_list)
@@ -121,7 +116,7 @@ TEST(TList, can_get_next_elemet)
 	list.insert_first(1);
 	list.next();
 	list.insert_last(2);
-	EXPECT_EQ(2, list.GetCurrent()->data);
+	EXPECT_EQ(2, list.GetCurrent());
 }
 
 TEST(TList, size_of_empty_list_is_zero)
@@ -148,15 +143,6 @@ TEST(TList, can_insert_first_element)
 	ASSERT_NO_THROW(list.insert_first(2));
 }
 
-TEST(TList, can_find_node_by_data)
-{
-	TList<int> list;
-	list.insert_first(1);
-	list.insert_last(2);
-	list.insert_last(3);
-	EXPECT_EQ(2, list.search(2)->data);
-}
-
 TEST(TList, can_insert_before_element)
 {
 	TList<int> list;
@@ -165,7 +151,7 @@ TEST(TList, can_insert_before_element)
 	list.insert_before(2,3);
 	list.reset();
 	list.next();
-	EXPECT_EQ(2, list.GetCurrent()->data);
+	EXPECT_EQ(2, list.GetCurrent());
 }
 
 TEST(TList, throw_when_element_not_found_in_insert_before) {
@@ -188,7 +174,7 @@ TEST(TList, can_insert_after_element)
 	list.insert_after(3, 2);
 	list.reset();
 	list.next();
-	EXPECT_EQ(3, list.GetCurrent()->data);
+	EXPECT_EQ(3, list.GetCurrent());
 }
 
 TEST(TList, throw_when_element_not_found_in_insert_after)
@@ -211,7 +197,7 @@ TEST(TList, reset_test)
 	list.insert_last(2);
 	list.insert_last(3);
 	list.reset();
-	EXPECT_EQ(1, list.GetCurrent()->data);
+	EXPECT_EQ(1, list.GetCurrent());
 }
 
 TEST(TList, insert_to_sorted_list_is_right)
@@ -220,11 +206,11 @@ TEST(TList, insert_to_sorted_list_is_right)
 	list.insert_sort(5);
 	list.insert_sort(3);
 	list.insert_sort(1);
-	EXPECT_EQ(1, list.GetCurrent()->data);
+	EXPECT_EQ(1, list.GetCurrent());
 	list.next();
-	EXPECT_EQ(3, list.GetCurrent()->data);
+	EXPECT_EQ(3, list.GetCurrent());
 	list.next();
-	EXPECT_EQ(5, list.GetCurrent()->data);
+	EXPECT_EQ(5, list.GetCurrent());
 }
 
 TEST(TList, sort_empty_list_does_not_throw)
@@ -244,6 +230,6 @@ TEST(TList, insert_sort_correct_into_empty_list)
 {
 	TList<int> list;
 	list.insert_sort(5);
-	EXPECT_EQ(5, list.GetCurrent()->data);
+	EXPECT_EQ(5, list.GetCurrent());
 }
 

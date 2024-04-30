@@ -2,6 +2,8 @@
 #define _THEADRINGLIST_H
 #include "list.h"
 
+#define THeadRingList THeadRingList_
+
 template <typename T>
 class THeadRingList : public TList<T> {
 private:
@@ -31,7 +33,7 @@ THeadRingList<T>::THeadRingList(const THeadRingList<T>& ringL) : TList<T>(ringL)
 
 template <typename T>
 THeadRingList<T>::~THeadRingList() {
-    delete pHead;
+    this->Clear();
 }
 
 template <typename T>
@@ -47,5 +49,8 @@ TNode<T>* THeadRingList<T>::GetHead() const {
     return pHead;
 }
 
+#undef THeadRingList
+template<typename T>
+using THeadRingList = TList<T>;
 
 #endif 

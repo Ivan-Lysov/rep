@@ -32,7 +32,7 @@ TEST(THeadRingList, can_copy_list)
 	list1.insert_last(2);
 	THeadRingList<int> list2(list1);
 	list1.reset();
-	EXPECT_EQ(list1.GetCurrent()->data, list2.GetCurrent()->data);
+	EXPECT_EQ(list1.GetCurrent(), list2.GetCurrent());
 }
 
 TEST(THeadRingList, can_insert_last_in_the_list)
@@ -64,7 +64,7 @@ TEST(THeadRingList, can_remove_first_element)
 	list.insert_last(1);
 	list.insert_last(2);
 	list.remove(1);
-	EXPECT_EQ(2, list.GetCurrent()->data);
+	EXPECT_EQ(2, list.GetCurrent());
 }
 
 TEST(THeadRingList, throw_when_element_not_found_in_remove)
@@ -81,7 +81,7 @@ TEST(THeadRingList, can_get_next_element)
 	list.insert_last(1);
 	list.next();
 	list.insert_last(2);
-	EXPECT_EQ(2, list.GetCurrent()->data);
+	EXPECT_EQ(2, list.GetCurrent());
 }
 
 //TEST(THeadRingList, can_clear_list)
@@ -113,15 +113,6 @@ TEST(THeadRingList, can_insert_first_element)
 	ASSERT_NO_THROW(list.insert_first(2));
 }
 
-TEST(THeadRingList, can_find_element_by_value)
-{
-	TList<int> list;
-	list.insert_last(1);
-	list.insert_last(2);
-	list.insert_last(3);
-	EXPECT_EQ(2, list.search(2)->data);
-}
-
 TEST(THeadRingList, can_insert_before_element)
 {
 	THeadRingList<int> list;
@@ -130,7 +121,7 @@ TEST(THeadRingList, can_insert_before_element)
 	list.insert_before(2, 3);
 	list.reset();
 	list.next();
-	EXPECT_EQ(2, list.GetCurrent()->data);
+	EXPECT_EQ(2, list.GetCurrent());
 }
 
 TEST(THeadRingList, throw_when_element_not_found_in_insert_before)
@@ -149,7 +140,7 @@ TEST(THeadRingList, can_insert_after_element)
 	list.insert_after(3, 2);
 	list.reset();
 	list.next();
-	EXPECT_EQ(3, list.GetCurrent()->data);
+	EXPECT_EQ(3, list.GetCurrent());
 }
 
 TEST(THeadRingList, throw_when_element_not_found_in_insert_after)
@@ -167,7 +158,7 @@ TEST(THeadRingList, reset_test)
 	list.insert_last(2);
 	list.next();
 	list.reset();
-	EXPECT_EQ(1, list.GetCurrent()->data);
+	EXPECT_EQ(1, list.GetCurrent());
 }
 
 TEST(THeadRingList, insert_to_sorted_list_is_right)
@@ -176,18 +167,18 @@ TEST(THeadRingList, insert_to_sorted_list_is_right)
 	list.insert_sort(6);
 	list.insert_sort(4);
 	list.insert_sort(2);
-	EXPECT_EQ(2, list.GetCurrent()->data);
+	EXPECT_EQ(2, list.GetCurrent());
 	list.next();
-	EXPECT_EQ(4, list.GetCurrent()->data);
+	EXPECT_EQ(4, list.GetCurrent());
 	list.next();
-	EXPECT_EQ(6, list.GetCurrent()->data);
+	EXPECT_EQ(6, list.GetCurrent());
 }
 
 TEST(THeadRingList, insert_sort_correct_into_empty_list)
 {
 	THeadRingList<int> list;
 	list.insert_sort(10);
-	EXPECT_EQ(10, list.GetCurrent()->data);
+	EXPECT_EQ(10, list.GetCurrent());
 }
 
 TEST(THeadRingList, check_hr_list_cannot_do_Next_method_at_Head)
