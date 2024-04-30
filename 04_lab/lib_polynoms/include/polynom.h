@@ -21,7 +21,7 @@ public:
 	TPolynom();
 	TPolynom(const string& _name);
 	TPolynom(const THeadRingList<TMonom>& list);
-
+	TPolynom(const THeadRingList<TMonom>* list);
 	TPolynom operator+(const TPolynom& p);
 	TPolynom operator -(const TPolynom& polynom);
 	TPolynom operator-() const;

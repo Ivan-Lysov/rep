@@ -15,16 +15,11 @@ TEST(TPolynom, can_parse_edge_cases) {
     EXPECT_EQ("-3.000000x^5z^2+x^2y^3", TPolynom("x^2*y^3 - 3*z^2*x^5").ToString());
     EXPECT_EQ("-3.000000x^5z^2-x^2y^3", TPolynom("-x^2*y^3 - 3*z^2*x^5").ToString());
     EXPECT_EQ("-x+5.000000", TPolynom("x + 1 - 2*x + 4").ToString()); // ++   - между плюсами
-                                                                                              //        стоит моном
-                                                                                              //        с коэффициентом
-                                                                                              //        равным 1 и без
-                                                                                              //        степеней
     EXPECT_EQ("0", TPolynom("x-x+y-y-1+1").ToString()); // ++   - между плюсами
     EXPECT_EQ("0", TPolynom("0").ToString());
     EXPECT_EQ("x", TPolynom("0+x").ToString());
     EXPECT_EQ("x", TPolynom("x-0").ToString());
 }
-
 
 TEST(TPolynom, create_polinom)
 {
@@ -74,7 +69,7 @@ TEST(TPolynom, can_create_polynom_with_ppozitive_coefficient)
 
 TEST(TPolynom, can_create_polynom_with_equal_coefficient)
 {
-	ASSERT_NO_THROW(TPolynom polynom("0y^2"));
+	ASSERT_NO_THROW(TPolynom polynom("0*y^2"));
 }
 
 TEST(TPolynom, can_create_polynom_with_negative_coefficient)

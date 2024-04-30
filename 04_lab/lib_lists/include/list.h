@@ -7,16 +7,14 @@ class TList {
 protected:
 	TNode<T>* pFirst;
 	TNode<T>* pLast;
-
-    mutable TNode<T>* pCurrent;
-
+    TNode<T>* pCurrent;
     TNode<T>* pStop = nullptr;
-
-    TNode<T>* search(const T& _data);
 public:
 	TList();
 	TList(const TList<T>& list);
 	virtual ~TList();
+
+	TNode<T>* search(const T& _data) const;
 
 	virtual void insert_first(const T& data);
     virtual void insert_last(const T& data);
@@ -27,10 +25,9 @@ public:
     virtual void remove(const T& data);
 
 	int GetSize() const;
-    void Clear();
-
-    void reset() const;
-    void next() const;
+    void Clear(); // virtual
+	void reset();
+    void next();
     bool IsEnded() const;
     T& GetCurrent() const;
 
@@ -40,7 +37,7 @@ public:
 	void insert_sort(const T& data);
 	virtual void Sort();
 
-    TList<T>& operator=(const TList<T> other);
+    const TList<T>& operator=(const TList<T> other);
 };
 
 template <typename T>
@@ -91,8 +88,13 @@ void TList<T>::Clear() {
 
 template <typename T>
 bool TList<T>::IsFull() const {
-	return !IsEmpty();
+	TNode<T>* tmp = new TNode<T>();
+	if (tmp == nullptr)
+		return true;
+	delete tmp;
+	return false;
 }
+	//return !IsEmpty();
 
 template <typename T>
 bool TList<T>::IsEmpty() const {
@@ -105,7 +107,7 @@ bool TList<T>::IsEnded()const {
 }
 
 template <typename T>
-TNode<T>* TList<T>::search(const T& _data) {
+TNode<T>* TList<T>::search(const T& _data) const { // prev
 	TNode<T>* Current = pFirst;
 	while (Current != pStop && Current->data != _data) {
 		Current = Current->pNext;
@@ -148,7 +150,7 @@ void TList<T>::insert_before(const T& what, const T& where) {
 		insert_first(what);
 		return;
 	}
-	TNode<T>* pPrev = pFirst;
+	TNode<T>* pPrev = pFirst;// search
 	while (pPrev->pNext != pWhere) {
 		pPrev = pPrev->pNext;
 	}
@@ -194,14 +196,14 @@ void TList<T>::remove(const T& data_) {
 }
 
 template <typename T>
-void TList<T>::reset() const {
+void TList<T>::reset() {
 	pCurrent = pFirst;
 }
 
 template <typename T>
-void TList<T>::next() const {
+void TList<T>::next() { // bool // Is_Ended()
 	if (pCurrent == pStop)
-		throw "List is ended";
+		throw "List is ended"; //
 	pCurrent = pCurrent->pNext;
 }
 
@@ -232,7 +234,7 @@ void TList<T>::insert_sort(const T& data) {
 	while (tmp->pNext != pStop && tmp->pNext->data <= data) {
 		tmp = tmp->pNext;
 	}
-	insert_after(data, tmp->data); // check when insert last
+	insert_after(data, tmp->data); 
 }
 
 template <typename T>
@@ -241,38 +243,38 @@ void TList<T>::Sort() {
 		return;
 	}
 
-	TNode<T>* current = pFirst;
-	TNode<T>* prev = nullptr;
+	TNode<T>* Current = pFirst;
+	TNode<T>* Previous = nullptr;
 
 	bool sorted = false;
 	while (!sorted) {
 		sorted = true;
-		current = pFirst;
-		prev = nullptr;
+		Current = pFirst;
+		Previous = nullptr;
 
-		while (current->pNext != nullptr && current->pNext != pStop) {
-			TNode<T>* next = current->pNext;
+		while (Current->pNext != nullptr && Current->pNext != pStop) {
+			TNode<T>* next = Current->pNext;
 
-			if (current->data < next->data) { // Используем пользовательскую функцию сравнения
+			if (Current->data < next->data) { // Используем пользовательскую функцию сравнения
 				// Поменяйте узлы местами
-				if (prev == nullptr) {
+				if (Previous == nullptr) {
 					// Если current является первым узлом
 					pFirst = next;
 				}
 				else {
-					prev->pNext = next;
+					Previous->pNext = next;
 				}
 
-				current->pNext = next->pNext;
-				next->pNext = current;
+				Current->pNext = next->pNext;
+				next->pNext = Current;
 
 				// Обновление указателей
-				prev = next;
+				Previous = next;
 				sorted = false;
 			}
 			else {
-				prev = current;
-				current = current->pNext;
+				Previous = Current;
+				Current = Current->pNext;
 			}
 		}
 	}
@@ -281,15 +283,15 @@ void TList<T>::Sort() {
 }
 
 template<typename T>
-TList<T> &TList<T>::operator=(const TList<T> other) {
+const TList<T> &TList<T>::operator=(const TList<T>& other) {
     if (this == &other)
         return *this;
 
-    TList<T> tmp(other);
-    std::swap(pFirst, tmp.pFirst);
-    std::swap(pLast, tmp.pLast);
-    std::swap(pCurrent, tmp.pCurrent);
-    std::swap(pStop, tmp.pStop);
+    TList<T> tmp(other); // todo
+    pFirst = tmp.pFirst);
+    pLast = tmp.pLast;
+    pCurrent = tmp.pCurrent;
+    pStop = tmp.pStop;
 
     return *this;
 }

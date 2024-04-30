@@ -25,6 +25,7 @@ TPolynom::TPolynom(const THeadRingList<TMonom>& list) {
 		monoms.insert_first(TMonom(0, 0));
 	}
 }
+
 //	// Удаляем нулевые мономы
 //	delNULL();
 //	// Объединяем одинаковые мономы
@@ -33,12 +34,11 @@ TPolynom::TPolynom(const THeadRingList<TMonom>& list) {
 //	monoms.Sort();
 //}
 
-string TPolynom::ToString() const {//может как-либо разбить метод на более мелкие функции чтобы этот метод был короче
+string TPolynom::ToString() const {
 	string str;
 	if (monoms.IsEmpty()) {
 		return "0"; 
 	}
-
 	THeadRingList<TMonom> sortedMonoms(monoms);
 	sortedMonoms.Sort();
 
@@ -123,25 +123,14 @@ void TPolynom::ParseMonoms(const string& _name) {
 	name = ToString();
 }
 
-//Старая реализация +
-//TPolynom TPolynom::operator+(const TPolynom& polynom) {
-//	TPolynom result(*this);
-//	polynom.monoms.reset();
-//	while (!polynom.monoms.IsEnded()) { // TODO: rewrite
-//		TMonom current = polynom.monoms.GetCurrent();
-//		result.monoms.insert_sort(current);
-//		polynom.monoms.next();
-//	}
-//	return result;
-//}
-
 TPolynom TPolynom::operator+(const TPolynom& polynom)
 {
 	THeadRingList<TMonom> list;
+	TPolynom cpolynom(polynom);
 	monoms.reset();
-	polynom.monoms.reset();
+	cpolynom.monoms.reset();
 
-	while (!monoms.IsEnded() && !polynom.monoms.IsEnded())
+	while (!monoms.IsEnded() && !cpolynom.monoms.IsEnded())
 	{
 		TMonom monom1 = monoms.GetCurrent();
 		TMonom monom2 = polynom.monoms.GetCurrent();
@@ -225,8 +214,6 @@ TPolynom TPolynom::operator*(const TPolynom& p)
 		}
 		monoms.next();
 	}
-	//привести подобные
-	// sim monoms
 	TPolynom result;
 	result.monoms = list;
 	result.name = result.ToString();
