@@ -1,9 +1,12 @@
 #include "monom.h"
+#include <stdexcept>
 	
 TMonom::TMonom() : coeff(0.0), degree(-1) {};//по умолчанию
 
 TMonom::TMonom(double _coeff,  int _degree){
-	if (_degree < 0 || _degree > 999) {throw ("Degree must be from 0 to 999");}
+	if (_degree < 0 || _degree > 999) {
+        throw std::exception("Degree must be from 0 to 999");
+    }
 	coeff = _coeff;
 	degree = _degree;
 }
@@ -30,10 +33,20 @@ TMonom TMonom::operator*(const TMonom& monom) const {
 		return TMonom(coeff * monom.coeff, degree + monom.degree);
 	}
 	else {
-		throw ("The degree must be between 0 and 999.");
+		throw std::exception("The degree must be between 0 and 999.");
 	}
 }
 
 TMonom TMonom::operator+(const TMonom& monom) const {
 	return TMonom(coeff + monom.coeff, degree);	
+}
+
+int TMonom::get_x_deg() const {
+    return degree / 100;
+}
+int TMonom::get_y_deg() const {
+    return (degree % 100) / 10;
+}
+int TMonom::get_z_deg() const {
+    return degree % 10;
 }

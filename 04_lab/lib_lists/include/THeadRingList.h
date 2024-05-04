@@ -2,8 +2,6 @@
 #define _THEADRINGLIST_H
 #include "list.h"
 
-#define THeadRingList THeadRingList_
-
 template <typename T>
 class THeadRingList : public TList<T> {
 private:
@@ -11,46 +9,61 @@ private:
 public:
     THeadRingList();
     THeadRingList(const THeadRingList& ringL);
+
     virtual ~THeadRingList();
     void insert_first(const T& data);
-    TNode<T>* GetHead() const;
+    void remove(const T& data);
 };
 
 template <typename T>
 THeadRingList<T>::THeadRingList() : TList<T>() {
     pHead = new TNode<T>();
-    pStop = pHead;
+    this->pStop = pHead;
 }
 
 template <typename T>
 THeadRingList<T>::THeadRingList(const THeadRingList<T>& ringL) : TList<T>(ringL) {
-    pHead = new TNode<T>(ringL.pHead->data, pFirst);
+    pHead = new TNode<T>(ringL.pHead->data, this->pFirst);
     if (!ringL.IsEmpty()) {
-        pLast->pNext = pHead;
+        this->pLast->pNext = pHead;
     }
-    pStop = pHead;
+    this->pStop = pHead;
 }
 
 template <typename T>
 THeadRingList<T>::~THeadRingList() {
-    this->Clear();
+//    delete pHead;
 }
 
 template <typename T>
 void THeadRingList<T>::insert_first(const T& data) {
     TList<T>::insert_first(data);
-    pHead->pNext = pFirst;
-    pStop = pHead;
-    pLast->pNext = pHead;
+    pHead->pNext = this->pFirst;
+    this->pStop = pHead;
+    this->pLast->pNext = pHead;
 }
 
-template <class T>
-TNode<T>* THeadRingList<T>::GetHead() const {
-    return pHead;
-}
-
-#undef THeadRingList
 template<typename T>
-using THeadRingList = TList<T>;
+void THeadRingList<T>::remove(const T& data) {
+    if (this->pFirst == nullptr) {
+        throw std::exception("List is empty");
+    }
+    TNode<T>* Current = this->pFirst;
+    if (Current->data == data) {
+        if (Current->pNext == pHead) {
+            this->pFirst = nullptr;
+            this->pCurrent = nullptr;
+            this->pLast = nullptr;
+            pHead->pNext = nullptr;
+            delete Current;
+            return;
+        }
+        this->pFirst = this->pFirst->pNext;
+        pHead->pNext = this->pFirst;
+        delete Current;
+        return;
+    }
+    TList<T>::remove(data);
+}
 
 #endif 

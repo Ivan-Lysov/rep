@@ -12,6 +12,7 @@ protected:
 public:
 	TList();
 	TList(const TList<T>& list);
+    TList(TNode<T>* _pFirst);
 	virtual ~TList();
 
 	TNode<T>* search(const T& _data) const;
@@ -37,7 +38,7 @@ public:
 	void insert_sort(const T& data);
 	virtual void Sort();
 
-    const TList<T>& operator=(const TList<T> other);
+    const TList<T>& operator=(const TList<T>& other);
 };
 
 template <typename T>
@@ -71,6 +72,17 @@ TList<T>::TList(const TList& list) {
 }
 
 template <typename T>
+TList<T>::TList(TNode<T>* pNode) {
+    pFirst = pNode;
+    TNode<T>* tmp = pNode;
+    while (tmp->pNext != nullptr) {
+        tmp = tmp->pNext;
+    }
+    pLast = tmp;
+    pCurrent = pFirst;
+}
+
+template <typename T>
 TList<T>::~TList() {
     Clear();
 }
@@ -78,7 +90,7 @@ TList<T>::~TList() {
 template <typename T>
 void TList<T>::Clear() {
     TNode<T>* tmp;
-    for (TNode<T>* node = pFirst; node != pStop; node = tmp) {
+    for (TNode<T>* node = pFirst; node && node != pStop; node = tmp) {
         tmp = node->pNext;
         delete node;
     }
@@ -102,8 +114,8 @@ bool TList<T>::IsEmpty() const {
 }
 
 template <typename T>
-bool TList<T>::IsEnded()const {
-	return (pCurrent == pStop);
+bool TList<T>::IsEnded() const {
+	return !pCurrent || (pCurrent == pStop);
 }
 
 template <typename T>
@@ -201,9 +213,10 @@ void TList<T>::reset() {
 }
 
 template <typename T>
-void TList<T>::next() { // bool // Is_Ended()
-	if (pCurrent == pStop)
-		throw "List is ended"; //
+void TList<T>::next() {
+    if (IsEnded()) {
+        throw std::range_error("List is ended");
+    }
 	pCurrent = pCurrent->pNext;
 }
 
@@ -287,11 +300,22 @@ const TList<T> &TList<T>::operator=(const TList<T>& other) {
     if (this == &other)
         return *this;
 
+    // copy-and-swap
+    //
+    // 1) создаетс€ временна€ копи€ other
+    // 2) происходит обмен данных текущего экземпл€ра и tmp
+    // 3) вызываетс€ деструктор tmp - он удал€ет наши бывшие данные
+    // 4) PROFIT
+    //
+    // если просто присвоить пол€м текущего экземпл€ра значени€ полей
+    // временного, то при вызове деструктора tmp они удал€тс€, и мы останемс€
+    // с мусором, пам€ть же выделенна€ под "наши" данные просто утечет
+
     TList<T> tmp(other); // todo
-    pFirst = tmp.pFirst);
-    pLast = tmp.pLast;
-    pCurrent = tmp.pCurrent;
-    pStop = tmp.pStop;
+    std::swap(pFirst, tmp.pFirst);
+    std::swap(pLast, tmp.pLast);
+    std::swap(pCurrent, tmp.pCurrent);
+    std::swap(pStop, tmp.pStop);
 
     return *this;
 }
