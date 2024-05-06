@@ -13,7 +13,6 @@ private:
 	THeadRingList<TMonom> monoms;
 
 	void ParseMonoms(const string& _name);
-	
 	void delNULL();
 	void CombineSimilarMonoms();
 	

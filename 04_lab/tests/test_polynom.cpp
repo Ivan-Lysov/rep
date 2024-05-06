@@ -2,25 +2,6 @@
 #include <gtest.h>
 const string str="x+y+z+1";
 
-// x^2*y^3 - 3*z^2*x^5
-// -x^2*y^3 - 3*z^2*x^5
-// x + 1 - 2*x + 4
-//x-x+y-y-1+1
-//"0" - полином
-//"0" + полином
-//полином - "0"
-
-#include <iostream>
-TEST(TPolynom, can_parse_edge_cases) {
-    EXPECT_EQ("-3.000000x^5z^2+x^2y^3", TPolynom("x^2*y^3 - 3*z^2*x^5").ToString());
-    EXPECT_EQ("-3.000000x^5z^2-x^2y^3", TPolynom("-x^2*y^3 - 3*z^2*x^5").ToString());
-    EXPECT_EQ("-x+5.000000", TPolynom("x + 1 - 2*x + 4").ToString()); // ++   - между плюсами
-    EXPECT_EQ("0", TPolynom("x-x+y-y-1+1").ToString()); // ++   - между плюсами
-    EXPECT_EQ("0", TPolynom("0").ToString());
-    EXPECT_EQ("x", TPolynom("0+x").ToString());
-    EXPECT_EQ("x", TPolynom("x-0").ToString());
-}
-
 TEST(TPolynom, create_polinom)
 {
 	ASSERT_NO_THROW(TPolynom polynom(str));
@@ -111,31 +92,49 @@ TEST(TPolynom, dy_returns_zero_for_polynomial_without_y_terms)
 	ASSERT_EQ(result.ToString(), expected.ToString());
 }
 
-TEST(TPolynom, calculate_is_correct1)
+TEST(TPolynom, calculate_is_correct_with_string)
 {
 	TPolynom pol(str);
 	double res = pol(1, 2, 3);
 	EXPECT_EQ(7, pol(1, 2, 3));
 }
 
-TEST(TPolynom, calculate_is_correct2)
+TEST(TPolynom, calculate_is_correct_with_less_euqel)
 {
 	TPolynom pol("x^3+x^2+y+z+1");
 	double res = pol(0.1, 0.2, 0.3);
 	ASSERT_NEAR(1.511, res, 1);
 }
 
-TEST(TPolynom, calculate_is_correct3)
+TEST(TPolynom, calculate_is_correct_when_polynom_is_const_and_x_y_z_not_null)
 {
 	TPolynom p("5");
 	EXPECT_EQ(p(0, 0, 0), 5);
 }
 
-TEST(TPolynom, calculate_is_correct4)
+TEST(TPolynom, calculate_is_correct_with_full_polynom)
 {
 	TPolynom pol("x^3+x^2+y+z+1");
 	double res = pol(1, 2, 3);
 	EXPECT_EQ(8, pol(1, 2, 3));
+}
+
+TEST(TPolynom, calculate_is_correct_with_not_full_polynom) {
+	TPolynom polynom("x^2 + y^2");
+	double result = polynom(2, 3, 0);
+	EXPECT_EQ(result, 13);
+}
+
+TEST(TPolynom, calculate_is_correct_with_not_full_polynom_and_with_null) {
+	TPolynom polynom("x^2 + y^2");
+	double result = polynom(0, 0, 0);
+	EXPECT_EQ(result, 0);
+}
+
+TEST(TPolynom, calculate_is_correct_with_null_and_x_y_z_not_null) {
+	TPolynom polynom("0");
+	double result = polynom(1, 1, 1);
+	EXPECT_EQ(result, 0);
 }
 
 TEST(TPolynom, no_throw_when_no_monomials_to_derive_dz)
@@ -231,5 +230,36 @@ TEST(TPolynomConstructorTest, ZeroMonoms) {
 	ASSERT_EQ(poly, expectedPoly);
 }
 
+TEST(TPolynom, parses_positive_expression_with_exponents_and_coefficients) {
+	EXPECT_EQ("-3x^5z^2+x^2y^3", TPolynom("x^2*y^3 - 3*z^2*x^5").ToString());
+}
+
+TEST(TPolynom, parses_negative_expression_with_exponents_and_coefficients) {
+	EXPECT_EQ("-3x^5z^2-x^2y^3", TPolynom("-x^2*y^3 - 3*z^2*x^5").ToString());
+}
+
+TEST(TPolynom, parses_expression_with_addition_operators) {
+	EXPECT_EQ("-x+5", TPolynom("x + 1 - 2*x + 4").ToString());
+}
+
+TEST(TPolynom, parses_expression_with_redundant_plus_and_minus_operators) {
+	EXPECT_EQ("0", TPolynom("x-x+y-y-1+1").ToString());
+}
+
+TEST(TPolynom, parses_zero_polynomial) {
+	EXPECT_EQ("0", TPolynom("0").ToString());
+}
+
+TEST(TPolynom, parses_polynomial_with_zero_constant_term) {
+	EXPECT_EQ("x", TPolynom("0+x").ToString());
+}
+
+TEST(TPolynom, parses_polynomial_with_zero_variable_term) {
+	EXPECT_EQ("x", TPolynom("x-0").ToString());
+}
+
+TEST(TPolynom, zero_minus_null) {
+	EXPECT_EQ("-x", TPolynom("0-x").ToString());
+}
 
 

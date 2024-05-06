@@ -15,6 +15,7 @@ public:
     TList(TNode<T>* _pFirst);
 	virtual ~TList();
 
+	TNode<T>* search_prev(const T& _data) const;
 	TNode<T>* search(const T& _data) const;
 
 	virtual void insert_first(const T& data);
@@ -26,7 +27,7 @@ public:
     virtual void remove(const T& data);
 
 	int GetSize() const;
-    void Clear(); // virtual
+    void Clear();
 	void reset();
     void next();
     bool IsEnded() const;
@@ -38,7 +39,7 @@ public:
 	void insert_sort(const T& data);
 	virtual void Sort();
 
-    const TList<T>& operator=(const TList<T>& other);
+    TList<T>& operator=(const TList<T>& other);
 };
 
 template <typename T>
@@ -106,7 +107,6 @@ bool TList<T>::IsFull() const {
 	delete tmp;
 	return false;
 }
-	//return !IsEmpty();
 
 template <typename T>
 bool TList<T>::IsEmpty() const {
@@ -118,22 +118,32 @@ bool TList<T>::IsEnded() const {
 	return !pCurrent || (pCurrent == pStop);
 }
 
-template <typename T>
-TNode<T>* TList<T>::search(const T& _data) const { // prev
-	TNode<T>* Current = pFirst;
-	while (Current != pStop && Current->data != _data) {
-		Current = Current->pNext;
-	}
-	if (Current == pStop) {
-		return nullptr;
-	}
-	return Current;
+template<typename T>
+TNode<T> *TList<T>::search_prev(const T &_data) const {
+    if (!pFirst || pFirst->data == _data) {
+        // в вызывающих функциях данный случай нужно обрабатывать отдельно,
+        // либо нужна фейковая голова списка
+        return nullptr;
+    }
+
+    TNode<T>* Prev = pFirst;
+
+    while (Prev->pNext != pStop && Prev->pNext->data != _data) {
+        Prev = Prev->pNext;
+    }
+    return (Prev->pNext == pStop || Prev->pNext->data != _data) ? nullptr : Prev;
 }
 
 template <typename T>
-void TList<T>::insert_first(const T& data) { 
-	TNode<T>* new_first = new TNode<T>(data, pFirst);
-	pFirst = new_first;
+TNode<T>* TList<T>::search(const T& _data) const {
+    if (pFirst && pFirst->data == _data) return pFirst;
+	auto prev = search_prev(_data);
+    return prev ? prev->pNext : nullptr;
+}
+
+template <typename T>
+void TList<T>::insert_first(const T& data) {
+	pFirst = new TNode<T>(data, pFirst);
 	if (pLast == nullptr) {
 		pLast = pFirst;
 	}
@@ -146,28 +156,24 @@ void TList<T>::insert_last(const T& data) {
 		insert_first(data);
 		return;
 	}
-	TNode<T>* new_last = new TNode<T>(data, pStop);
-	pLast->pNext = new_last;
-	pLast = new_last;
-	pCurrent = new_last;
+
+	pLast->pNext = new TNode<T>(data, pStop);
+	pLast = pLast->pNext;
+	pCurrent = pLast;
 }
 
 template <typename T>
 void TList<T>::insert_before(const T& what, const T& where) {
-	TNode<T>* pWhere = search(where);
-	if (pWhere == nullptr) {
-		throw "Element not found"; // Throw an exception if the element is not found
+    if (pFirst && pFirst->data == where) {
+        insert_first(what);
+        return;
+    }
+
+	TNode<T>* pPrevious = search_prev(where);
+	if (pPrevious == nullptr) {
+		throw std::exception("Element not found");
 	}
-	if (pWhere == pFirst) {
-		insert_first(what);
-		return;
-	}
-	TNode<T>* pPrev = pFirst;// search
-	while (pPrev->pNext != pWhere) {
-		pPrev = pPrev->pNext;
-	}
-	TNode<T>* new_node = new TNode<T>(what, pWhere);
-	pPrev->pNext = new_node;
+	pPrevious->pNext = new TNode<T>(what, pPrevious->pNext);
 }
 
 
@@ -175,7 +181,7 @@ template <typename T>
 void TList<T>::insert_after(const T& who, const T& where) {
 	TNode<T>* pWhere = search(where);
 	if (pWhere == nullptr) {
-		throw "Element not found"; 
+		throw std::exception("Element not found");
 	}
 	if (pWhere == pLast) {
 		insert_last(who);
@@ -188,7 +194,7 @@ void TList<T>::insert_after(const T& who, const T& where) {
 template <typename T>
 void TList<T>::remove(const T& data_) { 
 	if (IsEmpty()) 
-		throw "List is empty!";
+		throw std::exception("List is empty!");
 	TNode<T>* rem_elem = pFirst;
 	TNode<T>* pPrevious = nullptr;
 	while (rem_elem != pStop && rem_elem->data != data_)
@@ -202,7 +208,7 @@ void TList<T>::remove(const T& data_) {
 		return;
 	}
 	if (rem_elem == pStop)
-		throw "Data not found!";
+		throw std::exception("Data not found!");
 	pPrevious->pNext = rem_elem->pNext;
 	delete rem_elem;
 }
@@ -295,8 +301,8 @@ void TList<T>::Sort() {
 	pCurrent = pFirst;
 }
 
-template<typename T>
-const TList<T> &TList<T>::operator=(const TList<T>& other) {
+template<typename T>// https://y2kot.gitbook.io/untitled/idioms/copy-and-swap
+TList<T>& TList<T>::operator=(const TList<T>& other) {
     if (this == &other)
         return *this;
 
@@ -311,7 +317,7 @@ const TList<T> &TList<T>::operator=(const TList<T>& other) {
     // временного, то при вызове деструктора tmp они удалятся, и мы останемся
     // с мусором, память же выделенная под "наши" данные просто утечет
 
-    TList<T> tmp(other); // todo
+    TList<T> tmp(other); 
     std::swap(pFirst, tmp.pFirst);
     std::swap(pLast, tmp.pLast);
     std::swap(pCurrent, tmp.pCurrent);

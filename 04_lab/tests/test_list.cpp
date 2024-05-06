@@ -233,3 +233,13 @@ TEST(TList, insert_sort_correct_into_empty_list)
 	EXPECT_EQ(5, list.GetCurrent());
 }
 
+TEST(TList, can_insert_last_element) {
+	TList<int> list;
+	list.insert_last(1);
+	list.insert_last(2);
+	list.insert_last(3);
+	EXPECT_EQ(3, list.GetCurrent());
+}
+
+
+

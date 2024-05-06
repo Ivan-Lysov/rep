@@ -25,7 +25,7 @@ bool TNode<T>::operator>(const TNode& other) const {
 
 template<typename T>
 bool TNode<T>::operator<(const TNode& other) const {
-    return false;
+    return data < other.data;
 }
 
 

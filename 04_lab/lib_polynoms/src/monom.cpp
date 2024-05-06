@@ -1,4 +1,4 @@
-#include "monom.h"
+	#include "monom.h"
 #include <stdexcept>
 	
 TMonom::TMonom() : coeff(0.0), degree(-1) {};//по умолчанию

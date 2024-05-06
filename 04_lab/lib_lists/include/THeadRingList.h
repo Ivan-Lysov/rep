@@ -13,6 +13,8 @@ public:
     virtual ~THeadRingList();
     void insert_first(const T& data);
     void remove(const T& data);
+
+    THeadRingList& operator=(const THeadRingList& other);
 };
 
 template <typename T>
@@ -32,7 +34,7 @@ THeadRingList<T>::THeadRingList(const THeadRingList<T>& ringL) : TList<T>(ringL)
 
 template <typename T>
 THeadRingList<T>::~THeadRingList() {
-//    delete pHead;
+    delete pHead;
 }
 
 template <typename T>
@@ -64,6 +66,13 @@ void THeadRingList<T>::remove(const T& data) {
         return;
     }
     TList<T>::remove(data);
+}
+
+template<typename T>
+THeadRingList<T>& THeadRingList<T>::operator=(const THeadRingList& other) {
+    TList<T>::operator=(other);
+    pHead = new TNode<T>(other.pHead->data, this->pFirst);
+    return *this;
 }
 
 #endif 

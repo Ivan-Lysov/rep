@@ -1,6 +1,4 @@
 #include "polynom.h"
-//#include "stack.h"
-//#include "arithmetic.h"
 #include <sstream>
 
 TPolynom::TPolynom() {
@@ -157,11 +155,11 @@ TPolynom TPolynom::operator*(const TPolynom& polynom_)
     cpolynom.monoms.reset();
 	while (!monoms.IsEnded())
 	{
-		TMonom m = monoms.GetCurrent();
+		const TMonom& m = monoms.GetCurrent();
         cpolynom.monoms.reset();
 		while (!cpolynom.monoms.IsEnded())
 		{
-			TMonom m2 = cpolynom.monoms.GetCurrent();
+			const TMonom& m2 = cpolynom.monoms.GetCurrent();
 			double k = m.coeff;
 			double k2 = m2.coeff;
 			double k3 = k * k2; // == 0 
@@ -185,15 +183,15 @@ TPolynom TPolynom::dx() const {
 	TPolynom result;
     cp.monoms.reset();
 	while (!cp.monoms.IsEnded()) {
-		TMonom& monom = cp.monoms.GetCurrent();
+		const TMonom& monom = cp.monoms.GetCurrent();
 		if (monom.degree >= 100) {
 			int new_degree = monom.degree - 100;
 			double new_coeff = monom.coeff * (monom.degree / 100);
-			TMonom new_monom(new_coeff, new_degree);
-			result.monoms.insert_last(new_monom);
+			result.monoms.insert_last(TMonom(new_coeff, new_degree));
 		}
         cp.monoms.next();
 	}
+    result.delNULL();
 	return result;
 }
 
@@ -202,18 +200,17 @@ TPolynom TPolynom::dy() const {
 	TPolynom result;
     cp.monoms.reset();
 	while (!cp.monoms.IsEnded()) {
-		TMonom& monom = cp.monoms.GetCurrent();
+		const TMonom& monom = cp.monoms.GetCurrent();
 		int deg = cp.monoms.GetCurrent().degree;
 		int y = (deg % 100) / 10;
 		if (y >= 1) {
 			int new_degree = monom.degree - 10;
 			double new_coeff = monom.coeff * (monom.degree / 10.);
-			monom.degree = new_degree;
-			monom.coeff = new_coeff;
-			result.monoms.insert_last(monom);
+			result.monoms.insert_last(TMonom(new_coeff, new_degree));
 		}
         cp.monoms.next();
 	}
+    result.delNULL();
 	return result;
 }
 
@@ -222,18 +219,17 @@ TPolynom TPolynom::dz() const {
 	TPolynom result;
     cp.monoms.reset();
 	while (!cp.monoms.IsEnded()) {
-		TMonom& monom = cp.monoms.GetCurrent();
+		const TMonom& monom = cp.monoms.GetCurrent();
 		int deg = cp.monoms.GetCurrent().degree;
 		int z = deg % 10;
 		if (z >= 1) {
 			int new_degree = monom.degree - 1;
 			double new_coeff = monom.coeff * monom.degree;
-			monom.degree = new_degree;
-			monom.coeff = new_coeff;
-			result.monoms.insert_sort(monom);
+			result.monoms.insert_sort(TMonom(new_coeff, new_degree));
 		}
         cp.monoms.next();
 	}
+    result.delNULL();
 	return result;
 }
 
@@ -287,8 +283,10 @@ ostream& operator<<(ostream& out, const TPolynom& polynom) {
                 }
                 firstTerm = false;
             }
-            if (abs(coeff) != 1 || monom.degree == 0) {
-                out << (abs(coeff) == 1 ? ((coeff > 0) ? "" : "1") : std::to_string(abs(coeff)));
+
+            const double kAbs = fabs(coeff);
+            if (monom.degree == 0 || kAbs != 1.0) {
+                out << kAbs;
             }
 
             if (monom.degree != 0) {
@@ -311,11 +309,11 @@ ostream& operator<<(ostream& out, const TPolynom& polynom) {
 void TPolynom::delNULL() {
 	monoms.reset(); 
 	while (!monoms.IsEnded()) {
-		if (monoms.GetCurrent().coeff == 0.0) {
-			monoms.remove(monoms.GetCurrent());
-		}
-		else {
-			monoms.next();
+        const auto& monom = monoms.GetCurrent();
+        monoms.next();
+
+		if (monom.coeff == 0.0) {
+			monoms.remove(monom);
 		}
 	}
 }
