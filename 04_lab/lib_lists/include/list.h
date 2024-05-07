@@ -7,7 +7,7 @@ class TList {
 protected:
 	TNode<T>* pFirst;
 	TNode<T>* pLast;
-    TNode<T>* pCurrent;
+    TNode<T>* pCurrent; // TODO: pPrev
     TNode<T>* pStop = nullptr;
 public:
 	TList();
@@ -15,8 +15,8 @@ public:
     TList(TNode<T>* _pFirst);
 	virtual ~TList();
 
-	TNode<T>* search_prev(const T& _data) const;
-	TNode<T>* search(const T& _data) const;
+	TNode<T>* search_prev(const T& _data) const; // TODO: remove
+	TNode<T>* search(const T& _data) const; // TODO: control pPrev
 
 	virtual void insert_first(const T& data);
     virtual void insert_last(const T& data);
@@ -27,7 +27,7 @@ public:
     virtual void remove(const T& data);
 
 	int GetSize() const;
-    void Clear();
+    void Clear(); // TODO: virtual
 	void reset();
     void next();
     bool IsEnded() const;
@@ -39,7 +39,7 @@ public:
 	void insert_sort(const T& data);
 	virtual void Sort();
 
-    TList<T>& operator=(const TList<T>& other);
+    const TList<T>& operator=(const TList<T>& other);
 };
 
 template <typename T>
@@ -121,8 +121,6 @@ bool TList<T>::IsEnded() const {
 template<typename T>
 TNode<T> *TList<T>::search_prev(const T &_data) const {
     if (!pFirst || pFirst->data == _data) {
-        // в вызывающих функци€х данный случай нужно обрабатывать отдельно,
-        // либо нужна фейкова€ голова списка
         return nullptr;
     }
 
@@ -169,7 +167,7 @@ void TList<T>::insert_before(const T& what, const T& where) {
         return;
     }
 
-	TNode<T>* pPrevious = search_prev(where);
+	TNode<T>* pPrevious = search_prev(where); // search
 	if (pPrevious == nullptr) {
 		throw std::exception("Element not found");
 	}
@@ -197,7 +195,7 @@ void TList<T>::remove(const T& data_) {
 		throw std::exception("List is empty!");
 	TNode<T>* rem_elem = pFirst;
 	TNode<T>* pPrevious = nullptr;
-	while (rem_elem != pStop && rem_elem->data != data_)
+	while (rem_elem != pStop && rem_elem->data != data_) // search
 	{
 		pPrevious = rem_elem;
 		rem_elem = rem_elem->pNext;
@@ -305,23 +303,16 @@ template<typename T>// https://y2kot.gitbook.io/untitled/idioms/copy-and-swap
 TList<T>& TList<T>::operator=(const TList<T>& other) {
     if (this == &other)
         return *this;
-
-    // copy-and-swap
-    //
-    // 1) создаетс€ временна€ копи€ other
-    // 2) происходит обмен данных текущего экземпл€ра и tmp
-    // 3) вызываетс€ деструктор tmp - он удал€ет наши бывшие данные
-    // 4) PROFIT
-    //
-    // если просто присвоить пол€м текущего экземпл€ра значени€ полей
-    // временного, то при вызове деструктора tmp они удал€тс€, и мы останемс€
-    // с мусором, пам€ть же выделенна€ под "наши" данные просто утечет
-
-    TList<T> tmp(other); 
-    std::swap(pFirst, tmp.pFirst);
-    std::swap(pLast, tmp.pLast);
-    std::swap(pCurrent, tmp.pCurrent);
-    std::swap(pStop, tmp.pStop);
+	TList<T> tmp(other); 
+	pFirst = tmp.pFirst;
+	//std::swap(pFirst, tmp.pFirst);
+	pLast = tmp.pLast;
+    //std::swap(pLast, tmp.pLast);
+	pLast = tmp.pLast;
+    //std::swap(pCurrent, tmp.pCurrent);
+	pCurrent = tmp.pCurrent;
+    //std::swap(pStop, tmp.pStop);
+	pStop = tmp.pStop;
 
     return *this;
 }

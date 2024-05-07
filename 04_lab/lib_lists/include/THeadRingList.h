@@ -12,9 +12,10 @@ public:
 
     virtual ~THeadRingList();
     void insert_first(const T& data);
+	void insert_last(const T& data);
     void remove(const T& data);
 
-    THeadRingList& operator=(const THeadRingList& other);
+    const THeadRingList& operator=(const THeadRingList& other);
 };
 
 template <typename T>
@@ -51,7 +52,7 @@ void THeadRingList<T>::remove(const T& data) {
         throw std::exception("List is empty");
     }
     TNode<T>* Current = this->pFirst;
-    if (Current->data == data) {
+    if (Current->data == data) { // TODO: remove
         if (Current->pNext == pHead) {
             this->pFirst = nullptr;
             this->pCurrent = nullptr;
@@ -71,7 +72,7 @@ void THeadRingList<T>::remove(const T& data) {
 template<typename T>
 THeadRingList<T>& THeadRingList<T>::operator=(const THeadRingList& other) {
     TList<T>::operator=(other);
-    pHead = new TNode<T>(other.pHead->data, this->pFirst);
+    pHead = new TNode<T>(other.pHead->data, this->pFirst); // TODO: pLast->pNext = pHead
     return *this;
 }
 

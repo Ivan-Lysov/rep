@@ -3,7 +3,6 @@
 #include <string>
 #include <algorithm>
 #include "monom.h"
-//#include "arithmetic.h"
 #include "THeadRingList.h"
 using namespace std;
 

@@ -22,6 +22,7 @@ TPolynom::TPolynom(const THeadRingList<TMonom>& list) {
 	else {
 		monoms.insert_first(TMonom(0, 0));
 	}
+	// TODO: string name
 }
 
 string TPolynom::ToString() const {
@@ -162,19 +163,17 @@ TPolynom TPolynom::operator*(const TPolynom& polynom_)
 			const TMonom& m2 = cpolynom.monoms.GetCurrent();
 			double k = m.coeff;
 			double k2 = m2.coeff;
-			double k3 = k * k2; // == 0 
+			double k3 = k * k2;
 			int d = m.degree;
 			int d2 = m2.degree;
-			int deg = d + d2; // > 999 можно типо выйти за границы
+			int deg = d + d2;
 			TMonom mon(k3, deg);
 			list.insert_last(mon);
             cpolynom.monoms.next();
 		}
 		monoms.next();
 	}
-	TPolynom result;
-	result.monoms = list;
-	result.name = result.ToString();
+	TPolynom result(list);
 	return result;
 }
 
@@ -191,7 +190,7 @@ TPolynom TPolynom::dx() const {
 		}
         cp.monoms.next();
 	}
-    result.delNULL();
+    //result.delNULL();
 	return result;
 }
 
@@ -210,7 +209,7 @@ TPolynom TPolynom::dy() const {
 		}
         cp.monoms.next();
 	}
-    result.delNULL();
+    //result.delNULL();
 	return result;
 }
 
@@ -229,7 +228,7 @@ TPolynom TPolynom::dz() const {
 		}
         cp.monoms.next();
 	}
-    result.delNULL();
+    //result.delNULL();
 	return result;
 }
 
@@ -253,7 +252,7 @@ bool TPolynom::operator!=(const TPolynom& polynom) const {
 	return !(*this == polynom);
 }
 
-ostream& operator<<(ostream& out, const TPolynom& polynom) {
+ostream& operator<<(ostream& out, const TPolynom& polynom) { // TODO: ToString()
     if (polynom.monoms.IsEmpty()) {
         out << "0";
         return out;
@@ -368,7 +367,7 @@ double TPolynom::operator()(double x, double y, double z) const {
         int yExp = (deg % 100) / 10;
         int zExp = deg % 10;
 
-        monomValue *= pow(x, xExp) * pow(y, yExp) * pow(z, zExp);
+        monomValue *= pow(x, xExp) * pow(y, yExp) * pow(z, zExp); // Monom::operator()(x, y, z)
 
         result += monomValue;
 
