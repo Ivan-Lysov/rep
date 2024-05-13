@@ -142,16 +142,16 @@ TEST(TList, can_insert_first_element)
 	list.insert_first(1); 
 	ASSERT_NO_THROW(list.insert_first(2));
 }
-
-TEST(TList, can_insert_before_element)
+TEST(TList, insert_before_list)
 {
 	TList<int> list;
-	list.insert_first(1);
-	list.insert_last(3);
-	list.insert_before(2,3);
-	list.reset();
-	list.next();
-	EXPECT_EQ(2, list.GetCurrent());
+	list.insert_first(42);
+	list.insert_last(10);
+	list.insert_before(5, 10);
+	list.reset(); // Сбросим текущий указатель на начало списка
+	list.next(); // Переходим к следующему узлу
+	int data = list.GetCurrent(); // Получаем значение текущего узла
+	EXPECT_EQ(5, data);
 }
 
 TEST(TList, throw_when_element_not_found_in_insert_before) {

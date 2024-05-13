@@ -1,5 +1,5 @@
-#ifndef _NODE_H
-#define _NODE_H
+#ifndef _NODE_H_
+#define _NODE_H_
 
 #include <iostream>
 using namespace std;
@@ -12,7 +12,7 @@ struct TNode {
 	TNode() : data(), pNext(nullptr) {};
 	TNode(const T& data) : data(data), pNext(nullptr) {};
 	TNode(TNode<T>* pNext_) : data(), pNext(pNext_) {}; 
-	TNode(const T& data, TNode<T>* pNext_) : data(data), pNext(pNext_) {};
+	TNode(const T& data_, TNode<T>* pNext_) : data(data_), pNext(pNext_) {};
 
     bool operator<(const TNode& other) const;
     bool operator>(const TNode& other) const;
@@ -28,5 +28,4 @@ bool TNode<T>::operator<(const TNode& other) const {
     return data < other.data;
 }
 
-
-#endif // !_NODE_H
+#endif // !_NODE_H_

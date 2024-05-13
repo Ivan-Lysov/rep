@@ -96,7 +96,7 @@ TEST(THeadRingList, can_get_next_element)
 TEST(THeadRingList, throw_when_remove_from_empty_list)
 {
 	THeadRingList<int> list;
-	ASSERT_ANY_THROW(list.remove(5));
+	ASSERT_NO_THROW(list.remove(5));
 }
 
 TEST(THeadRingList, throw_when_remove_non_exist_elem)

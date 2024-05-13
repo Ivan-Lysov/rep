@@ -17,7 +17,9 @@ class TMonom  {
 	bool operator <=(const TMonom& data)const;
 	TMonom operator*(const TMonom& monom)const;
 	TMonom operator+(const TMonom& monom)const;
-
+	double monom(double x, double y, double z) const {
+		return coeff * pow(x, get_x_deg()) * pow(y, get_y_deg()) * pow(z, get_z_deg());
+	}
 	int get_x_deg() const;
 	int get_y_deg() const;
 	int get_z_deg() const;

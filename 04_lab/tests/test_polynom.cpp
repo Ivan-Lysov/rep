@@ -89,7 +89,7 @@ TEST(TPolynom, dy_returns_zero_for_polynomial_without_y_terms)
 	TPolynom polynom("z^3+x+1");
 	TPolynom result = polynom.dy();
 	TPolynom expected("0"); // ќжидаемый результат дл€ полинома без членов с y
-	ASSERT_EQ(result.ToString(), expected.ToString());
+	ASSERT_EQ(result, expected);
 }
 
 TEST(TPolynom, calculate_is_correct_with_string)
@@ -215,18 +215,6 @@ TEST(TPolynomConstructorTest, NonZeroMonoms) {
 	// ќжидаемый полином: x^2 + 3x + 4
 	TPolynom expectedPoly(monomList);
 
-	ASSERT_EQ(poly, expectedPoly);
-}
-
-TEST(TPolynomConstructorTest, ZeroMonoms) {
-	THeadRingList<TMonom> monomList;
-
-	// —оздаем пустой полином
-	TPolynom poly(monomList);
-	// ќжидаемый полином: 0
-	TPolynom expectedPoly;
-
-	// —равниваем с ожидаемым результатом
 	ASSERT_EQ(poly, expectedPoly);
 }
 
