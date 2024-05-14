@@ -26,7 +26,7 @@ THeadRingList<T>::THeadRingList(const THeadRingList& ringL) : TList<T>(ringL), p
         pHead = new TNode<T>(ringL.pHead->data);
         TNode<T>* curr = ringL.pHead->pNext;
         TNode<T>* thisCurr = pHead;
-        while (curr != ringL.pHead) {
+        while (curr != ringL.pHead) { //???????????????????
             thisCurr->pNext = new TNode<T>(curr->data);
             thisCurr = thisCurr->pNext;
             curr = curr->pNext;
@@ -37,16 +37,13 @@ THeadRingList<T>::THeadRingList(const THeadRingList& ringL) : TList<T>(ringL), p
 
 template <typename T>
 THeadRingList<T>::~THeadRingList() {
-    if (this->pFirst) {
-        this->Clear();
-        delete pHead;
-    }
+    delete pHead;
 }
 
 template <typename T>
 void THeadRingList<T>::insert_first(const T& data) {
     TList<T>::insert_first(data);
-    if (!pHead) {
+    if (!pHead) { // ???????????? pHead->pNext
         pHead = new TNode<T>(data);
         pHead->pNext = pHead; // Голова указывает на себя
     }
@@ -58,7 +55,7 @@ void THeadRingList<T>::remove(const T& data) {
         return;
     }
 
-    if (this->pFirst->data == data) {
+    if (this->pFirst->data == data) { //??????????????
         TNode<T>* tmp = this->pFirst;
         this->pFirst = this->pFirst->pNext;
         delete tmp;
@@ -79,7 +76,7 @@ void THeadRingList<T>::remove(const T& data) {
 }
 
 template <typename T>
-const THeadRingList<T>& THeadRingList<T>::operator=(const THeadRingList& other) {
+const THeadRingList<T>& THeadRingList<T>::operator=(const THeadRingList& other) { // TList::operator=
     if (this == &other) {
         return *this;
     }
@@ -113,9 +110,7 @@ const THeadRingList<T>& THeadRingList<T>::operator=(const THeadRingList& other) 
 template <typename T>
 void THeadRingList<T>::Clear() {
     TList<T>::Clear(); // Вызываем базовую реализацию
-    delete pHead; // Удаляем головной узел
-    pHead = nullptr; // Устанавливаем указатель на головной узел в nullptr
-    this->pStop = nullptr; // Обновляем указатель на остановку
+	pHead->pNext = pHead;//check
 }
 
 #endif 

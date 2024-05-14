@@ -20,7 +20,7 @@ public:
 	TNode<T>* search(const T& data);
 
 	virtual void insert_first(const T& data);
-	virtual void insert_last(const T& data);
+	void insert_last(const T& data);
 
 	void insert_before(const T& who, const T& where);
 	void insert_after(const T& who, const T& where);
@@ -60,7 +60,6 @@ TList<T>::TList(const TList& list) {
 		pLast = nullptr;
 		pCurrent = nullptr;
 		pPrev = nullptr;
-		//pStop = nullptr;
 		return;
 	}
 
@@ -170,7 +169,7 @@ template <typename T>
 void TList<T>::insert_before(const T& who, const T& where) {
 	TNode<T>* pWhere = search(where);
 	if (pWhere == nullptr) {
-		throw std::exception("no elements");
+		throw std::exception("No elements");
 	}
 
 	if (pWhere == pFirst) {
@@ -186,7 +185,7 @@ template <typename T>
 void TList<T>::insert_after(const T& who, const T& where) {
 	TNode<T>* pWhere = search(where);
 	if (pWhere == nullptr) {
-		throw std::exception("no elements");
+		throw std::exception("No elements");
 	}
 	if (pWhere == pLast) {
 		insert_last(who);
@@ -203,7 +202,7 @@ void TList<T>::remove(const T& data_) {
 	if (IsEmpty())
 		throw std::exception("List is empty!");
 	TNode<T>* rem_elem = pFirst;
-	TNode<T>* pPrev_rem_elem = nullptr;
+	TNode<T>* pPrev_rem_elem = nullptr; // search
 	while (rem_elem != pStop && rem_elem->data != data_)
 	{
 		pPrev_rem_elem = rem_elem;
@@ -320,6 +319,7 @@ const TList<T>& TList<T>::operator=(const TList<T>& other) {
 
     TNode<T>* otherCurr = other.pFirst;
     TNode<T>* curr = nullptr; // Указатель на текущий элемент в текущем списке
+	// copy other.pFirst, then append
 
     while (otherCurr != nullptr) {
         // Копируем данные из списка other

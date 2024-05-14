@@ -34,7 +34,7 @@ public:
 	bool operator==(const TPolynom&polynom) const;
 	bool operator!=(const TPolynom& polynom) const;
 
-	friend ostream& operator<<(ostream& out, const TPolynom& polynom);
+	friend ostream& operator<<(ostream& out, const TPolynom& polynom); // >>
 };
 
 #endif 

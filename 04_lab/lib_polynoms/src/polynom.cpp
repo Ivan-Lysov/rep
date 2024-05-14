@@ -29,7 +29,7 @@ string TPolynom::ToString() const {
 		return stream.str();
 	}
 
-	THeadRingList<TMonom> sortedMonoms(monoms);
+	THeadRingList<TMonom> sortedMonoms(monoms); //?????????
 	sortedMonoms.Sort();
 	bool firstTerm = true;
 	sortedMonoms.reset();
