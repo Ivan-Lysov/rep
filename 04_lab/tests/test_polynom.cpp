@@ -75,7 +75,7 @@ TEST(TPolynom, dz_is_correct)
 {
 	TPolynom polynom("z^3+z^2+y+x+1");
 	TPolynom tmp("3z^2+2z");
-	EXPECT_EQ(polynom.dz().ToString(), tmp.ToString());
+	EXPECT_EQ(polynom.dz(), tmp);
 }
 
 TEST(TPolynom,no_throw_when_no_monomials_to_derive_dx)

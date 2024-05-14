@@ -9,7 +9,7 @@ int main() {
 		cout << "=====================" << endl;
 		cout << "Enter polynom 1:";
 		//getline(cin, example1);
-		example1 = "-x";
+		example1 = "x^4*y^2*z";
 		TPolynom polynom1(example1);
 		cout << polynom1 << endl;
 		cout << "=====================" << endl;

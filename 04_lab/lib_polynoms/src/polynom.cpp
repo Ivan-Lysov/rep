@@ -252,22 +252,44 @@ TPolynom TPolynom::dx() const {
 }
 
 TPolynom TPolynom::dy() const {
-    TPolynom cp = *this;
+	TPolynom cp = *this;
 	TPolynom result;
-    cp.monoms.reset();
+	cp.monoms.reset();
 	while (!cp.monoms.IsEnded()) {
 		const TMonom& monom = cp.monoms.GetCurrent();
 		int deg = cp.monoms.GetCurrent().degree;
 		int y = (deg % 100) / 10;
 		if (y >= 1) {
-			int new_degree = monom.degree - 10;
-			double new_coeff = monom.coeff * (monom.degree / 10.);
-			result.monoms.insert_last(TMonom(new_coeff, new_degree));
+			// Проверка, что производная по y не обнулит степень монома
+			if (monom.degree / 10 > 0) {
+				int new_degree = monom.degree - 10;
+				double new_coeff = monom.coeff * (monom.get_y_deg() != 0 ? monom.get_y_deg() : 1);
+				result.monoms.insert_last(TMonom(new_coeff, new_degree));
+			}
 		}
-        cp.monoms.next();
+		cp.monoms.next();
 	}
 	return result;
 }
+
+
+//TPolynom TPolynom::dy() const {
+//    TPolynom cp = *this;
+//	TPolynom result;
+//    cp.monoms.reset();
+//	while (!cp.monoms.IsEnded()) {
+//		const TMonom& monom = cp.monoms.GetCurrent();
+//		int deg = cp.monoms.GetCurrent().degree;
+//		int y = (deg % 100) / 10;
+//		if (y >= 1) {
+//			int new_degree = monom.degree - 10;
+//			double new_coeff = monom.coeff * (monom.degree / 10);
+//			result.monoms.insert_last(TMonom(new_coeff, new_degree));
+//		}
+//        cp.monoms.next();
+//	}
+//	return result;
+//}
 
 TPolynom TPolynom::dz() const {
     TPolynom cp = *this;
@@ -279,7 +301,9 @@ TPolynom TPolynom::dz() const {
 		int z = deg % 10;
 		if (z >= 1) {
 			int new_degree = monom.degree - 1;
-			double new_coeff = monom.coeff * monom.degree;
+			double new_coeff = monom.coeff * (monom.get_y_deg() != 0 ? monom.get_z_deg() : 1);
+
+			//double new_coeff = monom.coeff * monom.degree;
 			result.monoms.insert_sort(TMonom(new_coeff, new_degree));
 		}
         cp.monoms.next();
