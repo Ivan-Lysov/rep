@@ -215,7 +215,7 @@ TPolynom TPolynom::operator*(const TPolynom& polynom_)
 		}
 		monoms.next();
 	}
-
+	//CombineSimilarMonoms;
 	TPolynom result;
 	result.monoms = list;
 	result.name = result.ToString();
@@ -238,6 +238,8 @@ TPolynom TPolynom::dx() const {
         cp.monoms.next();
 	}
 	if(!flag) result.monoms.insert_last(TMonom(0,0));
+	result.name = result.ToString();
+	// set result.name
 	return result;
 }
 
@@ -256,6 +258,7 @@ TPolynom TPolynom::dy() const {
 		}
 		cp.monoms.next();
 	}
+	// set result.name
 	return result;
 }
 
@@ -274,6 +277,7 @@ TPolynom TPolynom::dz() const {
 		}
         cp.monoms.next();
 	}
+	// set result.name
     return result;
 }
 

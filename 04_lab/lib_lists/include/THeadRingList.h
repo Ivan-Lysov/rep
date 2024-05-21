@@ -53,11 +53,10 @@ void THeadRingList<T>::remove(const T& data) {
     }
     TList<T>::remove(data);
     if (!this->pFirst) {
-        delete pHead;
-        pHead = nullptr;
+		pHead->pNext = pHead;
     }
-    else if (this->pFirst == pHead) {
-        pHead = this->pFirst;
+    else {
+        pHead->pNext = this->pFirst;
     }
     pCurrent = this->pFirst;
 }
