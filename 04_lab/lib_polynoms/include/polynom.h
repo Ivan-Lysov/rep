@@ -14,7 +14,6 @@ private:
 	void ParseMonoms(const string& _name);
 	void delNULL();
 	void CombineSimilarMonoms();
-	
 public:
 	TPolynom();
 	TPolynom(const string& _name);
@@ -34,7 +33,8 @@ public:
 	bool operator==(const TPolynom&polynom) const;
 	bool operator!=(const TPolynom& polynom) const;
 
-	friend ostream& operator<<(ostream& out, const TPolynom& polynom); // >>
+	friend ostream& operator<<(ostream& out, const TPolynom& polynom);
+	friend istream& operator>>(std::istream& in, TPolynom& polynom);
 };
 
 #endif 

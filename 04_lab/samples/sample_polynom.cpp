@@ -8,14 +8,14 @@ int main() {
 		string example2;
 		cout << "=====================" << endl;
 		cout << "Enter polynom 1:";
-		//getline(cin, example1);
-		example1 = "x^4*y^2*z";
+		//example1 = "0";
+		cin >> example1;
 		TPolynom polynom1(example1);
 		cout << polynom1 << endl;
 		cout << "=====================" << endl;
 		cout << "Enter polynom 2:";
-		//getline(cin, example2);
-		example2 = "x^2+y^2+z+10";
+		//example2 = "x^2+y^2+z+10";
+		cin >> example2;
 		TPolynom polynom2(example2);
 		cout << polynom2 << endl;
 		cout << "=====================" << endl;

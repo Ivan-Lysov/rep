@@ -1,7 +1,7 @@
 #include "monom.h"
 #include <stdexcept>
 	
-TMonom::TMonom() : coeff(0.0), degree(-1) {};//по умолчанию
+TMonom::TMonom() : coeff(0.0), degree(-1) {};
 
 TMonom::TMonom(double _coeff,  int _degree){
 	if (_degree < 0 || _degree > 999) {
@@ -12,7 +12,6 @@ TMonom::TMonom(double _coeff,  int _degree){
 }
 
 bool TMonom::operator==(const TMonom& data) const {
-	// Сравниваем степени мономов
 	return (degree == data.degree);
 }
 

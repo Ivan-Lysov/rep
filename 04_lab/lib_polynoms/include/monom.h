@@ -1,7 +1,6 @@
 #ifndef _MONOM_H
 #define _MONOM_H
 #include <iostream>
-//#include "list.h"
 using namespace std;
 
 class TMonom  {
