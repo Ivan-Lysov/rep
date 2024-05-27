@@ -304,7 +304,7 @@ void TList<T>::Sort() {
 		while (Current->pNext != nullptr && Current->pNext != pStop) {
 			TNode<T>* next = Current->pNext;
 
-			if (Current->data < next->data) { // Используем пользовательскую функцию сравнения
+			if (Current->data < next->data) { 
 				if (Previous == nullptr) {
 					pFirst = next;
 				}

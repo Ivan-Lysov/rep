@@ -22,6 +22,7 @@ public:
 template <typename T>
 THeadRingList<T>::THeadRingList() : TList<T>() {
     pHead = new TNode<T>();
+    pHead->pNext = pHead;
     pStop = pHead;
 }
 
@@ -64,7 +65,7 @@ void THeadRingList<T>::remove(const T& data) {
 template <typename T>
 const THeadRingList<T>& THeadRingList<T>::operator=(const THeadRingList<T>& l) {
 
-   
+
     this->TList<T>::operator=(l);
     this->pHead->pNext = this->pFirst;
     return *(this);

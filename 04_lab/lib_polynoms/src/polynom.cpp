@@ -32,8 +32,6 @@ string TPolynom::ToString() const {
 	THeadRingList<TMonom> sortedMonoms(monoms);
 	//sortedMonoms.Sort();
 	bool firstTerm = true;
-
-	// Проверка первого монома на равенство нулю
 	if (sortedMonoms.GetCurrent().coeff == 0 && sortedMonoms.GetCurrent().degree == 0) {
 		return "0";
 	}
@@ -139,7 +137,7 @@ TPolynom TPolynom::operator+(const TPolynom& polynom_)
 			double coef1 = monom1.coeff;
 			double coef2 = monom2.coeff;
 			double coef_res = coef1 + coef2;
-			if (coef_res != 0)
+			if (coef_res != 0 || monom1.degree==0)
 			{
 				monom2.coeff = coef_res;
 				list.insert_last(monom2);
@@ -204,10 +202,10 @@ TPolynom TPolynom::operator*(const TPolynom& polynom_)
 			const TMonom& m2 = cpolynom.monoms.GetCurrent();
 			double k = m.coeff;
 			double k2 = m2.coeff;
-			double k3 = k * k2; // == 0 
+			double k3 = k * k2; 
 			int d = m.degree;
 			int d2 = m2.degree;
-			int deg = d + d2; // > 999 можно типо выйти за границы
+			int deg = d + d2; 
 			cpolynom.monoms.next();
 			if (k3 == 0 && deg != 0)continue;
 			TMonom mon(k3, deg);
@@ -215,10 +213,10 @@ TPolynom TPolynom::operator*(const TPolynom& polynom_)
 		}
 		monoms.next();
 	}
-	//CombineSimilarMonoms;
 	TPolynom result;
 	result.monoms = list;
 	result.name = result.ToString();
+	result.CombineSimilarMonoms();
 	return result;
 }
 
@@ -258,6 +256,7 @@ TPolynom TPolynom::dy() const {
 		}
 		cp.monoms.next();
 	}
+	result.name = result.ToString();
 	// set result.name
 	return result;
 }
@@ -277,6 +276,7 @@ TPolynom TPolynom::dz() const {
 		}
         cp.monoms.next();
 	}
+	result.name = result.ToString();
 	// set result.name
     return result;
 }
